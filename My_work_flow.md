@@ -16,16 +16,18 @@ git fetch upstream`
 `git pull upstream downloads`
 
 
-### Workflow for your local branch repo:
+### Workflow for your local forked repo:
 ###### To add new changes
 `git add .`
 
 ###### Add commit on new changes
 `git commit -m "Add Note"`
 
-###### Push changes to branch
+###### Push changes to fork
 `git push`
 
+###### Pull changes to fork
+`git pull`
 
 <!-- #endregion -->
 

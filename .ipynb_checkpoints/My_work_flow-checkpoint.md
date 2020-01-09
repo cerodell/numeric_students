@@ -1,3 +1,4 @@
+<!-- #region -->
 # My work flow
 
 ### Clone your fork:
@@ -15,9 +16,20 @@ git fetch upstream`
 `git pull upstream downloads`
 
 
+### Workflow for your local forked repo:
+###### To add new changes
+`git add .`
 
+###### Add commit on new changes
+`git commit -m "Add Note"`
 
+###### Push changes to fork
+`git push`
 
+###### Pull changes to fork
+`git pull`
+
+<!-- #endregion -->
 
 <!-- #region -->
 ## My conda environment
@@ -25,3 +37,7 @@ git fetch upstream`
 
 `conda activate numeric`
 <!-- #endregion -->
+
+```python
+
+```

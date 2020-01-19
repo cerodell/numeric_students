@@ -516,7 +516,7 @@ out=ax.legend(loc='upper left')
 # ### Chirs Rodell Lab2 Q1
 #
 # - a\) 
-#      $$
+# $$
 # y_{i-1}=y_{i}-h y_{i}^{\prime}+\frac{h^{2}}{2 !} y_{i}^{\prime \prime}-\frac{h^{3}}{3 !} y_{i}^{\prime \prime \prime}+\frac{h^{4}}{4 !} y_{i}^{\prime \prime \prime \prime}-\ldots
 # $$
 #
@@ -629,8 +629,11 @@ out=ax.legend(loc='upper left')
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q2
 # - a/)
-
+# No increasing the orde of the scheme (or decreasing the time step)
+# does not always improve the solution (as apparent in 50 number of time steps).
+# 
 # %%
+%matplotlib 
 plt.style.use('ggplot')
 #
 # save our three functions to a dictionary, keyed by their names
@@ -657,7 +660,7 @@ theLambda=0.8  #units have to be per minute if time in minutes
 
 # Define three diff step sizers
 npts= [30, 20, 10]
-title_label = ["30", "20", '10']
+title_label = ["30", "50", '10']
 
 fig,ax=plt.subplots(1,3,figsize=(16,8))
 for i in range(len(npts)):
@@ -671,14 +674,65 @@ for i in range(len(npts)):
     for fun_name in output.keys():
         the_time,the_temp=output[fun_name]
         ax[i].plot(the_time,the_temp,label=fun_name,lw=2)
-    ax[i].set_title("Step sizer:  " + title_label[i])
+    ax[i].set_title("Number of timesteps:  " + title_label[i])
     ax[i].set_xlim([0,2.])
     ax[i].set_ylim([30.,90.])
     ax[i].grid(True)
     ax[i].set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
     out=ax[i].legend(loc='upper left')
 
-# %%
+# %% [markdown]
+# ### Chirs Rodell Lab2 Q2 continued
+# - b/)
+# $$
+# \text { global error }=\left|T\left(t_{n}\right)-T_{n}\right|
+# $$
+
+
+
+# %% 
+
+## Plt Global Error
+fig,ax=plt.subplots(1,3,figsize=(16,8))
+for i in range(len(npts)):
+    for name,the_fun in theFuncs.items():
+        output[name]=the_fun(npts[i],tend,To,Ta,theLambda)
+    # calculate the exact solution for comparison
+    exactTime=np.linspace(0,tend,npts[i])
+    exactTemp=Ta + (To-Ta)*np.exp(theLambda*exactTime)
+    # now plot all four curves
+    # ax[i].plot(exactTime,exactTemp,label='exact',lw=2)
+    for fun_name in output.keys():
+        the_time,the_temp=output[fun_name]
+        ax[i].plot(the_time, abs(the_temp-exactTemp),label=fun_name,lw=2)
+    ax[i].set_title("Global Error for number of timesteps:  " + title_label[i])
+    ax[i].set_xlim([0,5.])
+    ax[i].set_ylim([0.,90.])
+    ax[i].grid(True)
+    ax[i].set(xlabel='time (minutes)',ylabel='Perturbation temp (deg C)')
+    out=ax[i].legend(loc='upper left')
+
+## Plt Local Error
+fig,ax=plt.subplots(1,3,figsize=(16,8))
+for i in range(len(npts)):
+    for name,the_fun in theFuncs.items():
+        output[name]=the_fun(npts[i],tend,To,Ta,theLambda)
+    # calculate the exact solution for comparison
+    exactTime=np.linspace(0,tend,npts[i])
+    exactTemp=Ta + (To-Ta)*np.exp(theLambda*exactTime)
+    # now plot all four curves
+    # ax[i].plot(exactTime,exactTemp,label='exact',lw=2)
+    for fun_name in output.keys():
+        the_time,the_temp=output[fun_name]
+        ax[i].plot(the_time, abs(the_temp-exactTemp),label=fun_name,lw=2)
+    ax[i].set_title("Local Error for number of timesteps:  " + title_label[i])
+    ax[i].set_xlim([0,5.])
+    ax[i].set_ylim([0.,90.])
+    ax[i].grid(True)
+    ax[i].set(xlabel='time (minutes)',ylabel='Perturbation temp (deg C)')
+    out=ax[i].legend(loc='upper left')
+
+
 
 
 

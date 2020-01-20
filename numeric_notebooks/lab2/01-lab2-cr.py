@@ -903,48 +903,48 @@ Ta=20.
 To=30.
 theLambda=-8.
 npts=40
-funChoice=['euler' , 'beuler', 'leapfrog', 'midpoint']
+theFuncs={'euler':euler,'beuler':beuler, 'leapfrog':leapfrog,'midpoint':midpoint}
+fun=['euler' , 'beuler', 'leapfrog', 'midpoint']
 
-approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
-exactTime=np.empty([npts,],float)
-exactTemp=np.empty_like(exactTime)
-for i in np.arange(0,npts):
-    exactTime[i] = tend*i/npts
-    exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
-plt.close('all')
-plt.figure(1)
-plt.clf()
-plt.plot(exactTime,exactTemp,'r+')
-# plt.hold(True)
-plt.plot(approxTime,approxTemp)
-theAx=plt.gca()
-# theAx.set_xlim([0,10])
-# theAx.set_ylim([15,30])
-theAx.set_title('stability')
-plt.show()
+# for funChoice in fun:
+#     approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
+#     exactTime=np.empty([npts,],float)
+#     exactTemp=np.empty_like(exactTime)
+#     for i in np.arange(0,npts):
+#         exactTime[i] = tend*i/npts
+#         exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
+#     # plt.close('all')
+#     plt.figure(1)
+#     plt.clf()
+#     plt.plot(exactTime,exactTemp,'r+')
+#     # plt.hold(True)
+#     plt.plot(approxTime,approxTemp)
+#     theAx=plt.gca()
+#     # theAx.set_xlim([0,10])
+#     # theAx.set_ylim([15,30])
+#     theAx.set_title('stability of  ' + funChoice)
+#     plt.show('all')
 
-# %%
-
-fig,ax=plt.subplots(1,figsize=(16,8))
-for name,the_fun in theFuncs.items():
-    output[name]=the_fun(npts,tend,To,Ta,theLambda)
-# calculate the exact solution for comparison
-exactTime=np.empty([npts,],float)
-exactTemp=np.empty_like(exactTime)
-for i in np.arange(0,npts):
-    exactTime[i] = tend*i/npts
-    exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
-# now plot all four curves
-ax.plot(exactTime,exactTemp,'r+',label='exact')
-for fun_name in output.keys():
-    the_time,the_temp=output[fun_name]
-    ax.plot(the_time,the_temp,label=fun_name,lw=2)
-# ax.set_title("Number of timesteps:  " + title_label[i])
-# ax.set_xlim([0,2.])
-# ax.set_ylim([30.,90.])
-ax.grid(True)
-ax.set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
-out=ax.legend(loc='upper left')
+fig,ax=plt.subplots(1,4,figsize=(18,8))
+for ii in range(len(fun)):
+# for funChoice in fun:
+    funChoice = fun[ii]
+    approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
+    exactTime=np.empty([npts,],float)
+    exactTemp=np.empty_like(exactTime)
+    for i in np.arange(0,npts):
+        exactTime[i] = tend*i/npts
+        exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
+    # plt.close('all')
+    # plt.figure(1)
+    # plt.clf()
+    ax[ii].plot(exactTime,exactTemp,'r+')
+    # plt.hold(True)
+    ax[ii].plot(approxTime,approxTemp)
+    # theAx.set_xlim([0,10])
+    ax[ii].set_ylim([0,50])
+    ax[ii].set_title('stability of  ' + funChoice)
+    # plt.show('all')
 
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q3 continued

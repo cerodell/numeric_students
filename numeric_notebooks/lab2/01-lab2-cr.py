@@ -936,8 +936,6 @@ for iii in range(len(tend)):
 
 
 
-
-
 # %% [markdown]
 # There is a way to determine the stability properties of a scheme, and
 # that is to apply the scheme to the *test equation*
@@ -980,6 +978,12 @@ for iii in range(len(tend)):
 # backward Euler formula, and show that it is *always stable* when
 # $\lambda$ is real and negative.
 #
+# %% [markdown]
+# ### Chirs Rodell Lab2 Q4 
+##
+
+
+# %% [markdown]
 # #### Example: leap-frog
 #
 # *Now, what about the leap frog scheme?*

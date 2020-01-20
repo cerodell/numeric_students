@@ -236,7 +236,7 @@
 # %matplotlib inline
 import context
 import matplotlib.pyplot as plt
-from numlabs.lab2.lab2_functions import euler,beuler,leapfrog
+from numlabs.lab2.lab2_functions import euler,beuler,leapfrog,runge,midpoint
 import numpy as np
 plt.style.use('ggplot')
 #
@@ -629,18 +629,19 @@ out=ax.legend(loc='upper left')
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q2
 # - a/)
-# No increasing the order of the scheme (or decreasing the time step)
-# does not always improve the solution (as apparent in 50 number of time steps). 
-# There there is a limit to how small  can be, beyond which round-off errors will
-# start polluting the computation
-# 
+# In this case yes, increasing the number of times steps does increase 
+# the accuracy (as seen in the 1000 number of time steps plot).
+# There there is a limit to how small  can be, beyond which round-off
+# errors will start polluting the computation.
+
+
 # %%
 %matplotlib 
 plt.style.use('ggplot')
 #
 # save our three functions to a dictionary, keyed by their names
 #
-theFuncs={'euler':euler,'beuler':beuler,'leapfrog':leapfrog}
+theFuncs={'euler':euler,'leapfrog':leapfrog,'runge':runge}
 #
 # store the results in another dictionary
 #
@@ -661,8 +662,8 @@ To=30.
 theLambda=0.8  #units have to be per minute if time in minutes
 
 # Define three diff step sizers
-npts= [30, 20, 10]
-title_label = ["30", "50", '10']
+npts= [30, 1000, 10]
+title_label = ["30", "1000", '10']
 
 fig,ax=plt.subplots(1,3,figsize=(16,8))
 for i in range(len(npts)):
@@ -693,6 +694,8 @@ for i in range(len(npts)):
 
 
 # %% 
+
+theFuncs={'euler':euler,'leapfrog':leapfrog,'runge':runge}
 
 ## Plt Global Error
 fig,ax=plt.subplots(1,3,figsize=(16,8))
@@ -889,6 +892,69 @@ for i in range(len(npts)):
 # schemes are used. Furthermore, as we will see below, even a scheme such
 # as forward Euler can be unstable for certain problems and choices of the
 # time step.
+
+# %% [markdown]
+# ### Chirs Rodell Lab2 Q3
+# Problem Stability – hand in as part of a jupyter notebook
+
+
+
+# %% 
+
+plt.style.use('ggplot')
+#
+# save our three functions to a dictionary, keyed by their names
+#
+theFuncs={'euler':euler,'leapfrog':leapfrog, 'beuler':beuler}
+#
+# store the results in another dictionary
+#
+output={}
+#
+#end time = 100 minutes
+#
+tend=2.
+#
+# start at 30 degC, air temp of 20 deg C
+#
+Ta=20.
+To=30.
+#
+# note that lambda is a reserved keyword in python so call this
+# thelambda
+
+# -8 sec^-1 = 480 mins^-1
+theLambda=-8.  #units have to be per minute if time in minutes
+
+
+# Define three diff step sizers
+npts= [30, 100, 10]
+title_label = ["30", "100", '10']
+
+fig,ax=plt.subplots(1,3,figsize=(16,8))
+for i in range(len(npts)):
+    for name,the_fun in theFuncs.items():
+        output[name]=the_fun(npts[i],tend,To,Ta,theLambda)
+    # calculate the exact solution for comparison
+    exactTime=np.linspace(0,tend,npts[i])
+    exactTemp=Ta + (To-Ta)*np.exp(theLambda*exactTime)
+    # now plot all four curves
+    ax[i].plot(exactTime,exactTemp,label='exact',lw=2)
+    for fun_name in output.keys():
+        the_time,the_temp=output[fun_name]
+        ax[i].plot(the_time,the_temp,label=fun_name,lw=2)
+    ax[i].set_title("Number of timesteps:  " + title_label[i])
+    # ax[i].set_xlim([0,2.])
+    # ax[i].set_ylim([30.,90.])
+    ax[i].grid(True)
+    ax[i].set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
+    out=ax[i].legend(loc='upper left')
+
+
+
+
+
+
 
 # %% [markdown]
 # There is a way to determine the stability properties of a scheme, and

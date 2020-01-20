@@ -898,39 +898,40 @@ for i in range(len(npts)):
 # Problem Stability – hand in as part of a jupyter notebook
 
 # %% 
-tend=10.
-Ta=20.
-To=30.
-theLambda=-8.
-npts=40
-theFuncs={'euler':euler,'beuler':beuler, 'leapfrog':leapfrog,'midpoint':midpoint}
-fun=['euler' , 'beuler', 'leapfrog', 'midpoint']
+fig,ax=plt.subplots(3,4,figsize=(18,14))
 
-fig,ax=plt.subplots(1,4,figsize=(18,8))
-for ii in range(len(fun)):
-# for funChoice in fun:
-    funChoice = fun[ii]
-    approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
-    exactTime=np.empty([npts,],float)
-    exactTemp=np.empty_like(exactTime)
-    for i in np.arange(0,npts):
-        exactTime[i] = tend*i/npts
-        exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
-    # plt.close('all')
-    # plt.figure(1)
-    # plt.clf()
-    ax[ii].plot(exactTime,exactTemp,'r+')
-    # plt.hold(True)
-    ax[ii].plot(approxTime,approxTemp)
-    # theAx.set_xlim([0,10])
-    ax[ii].set_ylim([0,50])
-    ax[ii].set_title('stability of  ' + funChoice)
-    # plt.show('all')
+tend= [1. , 2., 15.]
+for iii in range(len(tend)):
+    Ta=20.
+    To=30.
+    theLambda=-8.
+    npts=40
+    theFuncs={'euler':euler,'beuler':beuler, 'leapfrog':leapfrog,'midpoint':midpoint}
+    fun=['euler' , 'beuler', 'leapfrog', 'midpoint']
+
+    # fig,ax=plt.subplots(1,4,figsize=(18,8))
+    for ii in range(len(fun)):
+        funChoice = fun[ii]
+        approxTime,approxTemp=theFuncs[funChoice](npts,tend[iii],To,Ta,theLambda)
+        exactTime=np.empty([npts,],float)
+        exactTemp=np.empty_like(exactTime)
+        for i in np.arange(0,npts):
+            exactTime[i] = tend[iii]*i/npts
+            exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
+
+        ax[iii,ii].plot(exactTime,exactTemp,'r+', label = ' exact')
+        ax[iii,ii].plot(approxTime,approxTemp, label = funChoice, color = 'k')
+        ax[iii,ii].set_ylim([0,50])
+        ax[iii,ii].legend()
+        ax[iii,ii].set_title('stability of  ' + funChoice + ' dt of:  ' + str(tend[iii]/npts))
 
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q3 continued
+# - a\) As the dt decrease as does the stability. 
+# You can see this in all the methods. However, 
+# leapfrog and midpoint become unstable first.
 
-
+# - b\) You can see that beuler is stable while leapfrog is not.
 
 
 

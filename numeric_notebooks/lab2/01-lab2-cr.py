@@ -906,25 +906,6 @@ npts=40
 theFuncs={'euler':euler,'beuler':beuler, 'leapfrog':leapfrog,'midpoint':midpoint}
 fun=['euler' , 'beuler', 'leapfrog', 'midpoint']
 
-# for funChoice in fun:
-#     approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
-#     exactTime=np.empty([npts,],float)
-#     exactTemp=np.empty_like(exactTime)
-#     for i in np.arange(0,npts):
-#         exactTime[i] = tend*i/npts
-#         exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
-#     # plt.close('all')
-#     plt.figure(1)
-#     plt.clf()
-#     plt.plot(exactTime,exactTemp,'r+')
-#     # plt.hold(True)
-#     plt.plot(approxTime,approxTemp)
-#     theAx=plt.gca()
-#     # theAx.set_xlim([0,10])
-#     # theAx.set_ylim([15,30])
-#     theAx.set_title('stability of  ' + funChoice)
-#     plt.show('all')
-
 fig,ax=plt.subplots(1,4,figsize=(18,8))
 for ii in range(len(fun)):
 # for funChoice in fun:

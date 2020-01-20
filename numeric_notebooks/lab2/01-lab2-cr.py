@@ -898,7 +898,8 @@ for i in range(len(npts)):
 # Problem Stability – hand in as part of a jupyter notebook
 
 # %% 
-fig,ax=plt.subplots(3,4,figsize=(18,14))
+fig,ax=plt.subplots(3,4,figsize=(16,10))
+fig.suptitle('Stability', fontsize=16)
 
 tend= [1. , 2., 15.]
 for iii in range(len(tend)):
@@ -923,7 +924,7 @@ for iii in range(len(tend)):
         ax[iii,ii].plot(approxTime,approxTemp, label = funChoice, color = 'k')
         ax[iii,ii].set_ylim([0,50])
         ax[iii,ii].legend()
-        ax[iii,ii].set_title('stability of  ' + funChoice + ' dt of:  ' + str(tend[iii]/npts))
+        ax[iii,ii].set_title(funChoice + ' dt of:  ' + str(tend[iii]/npts))
 
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q3 continued

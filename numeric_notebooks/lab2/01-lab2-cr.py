@@ -897,58 +897,58 @@ for i in range(len(npts)):
 # ### Chirs Rodell Lab2 Q3
 # Problem Stability – hand in as part of a jupyter notebook
 
-
-
 # %% 
-
-plt.style.use('ggplot')
-#
-# save our three functions to a dictionary, keyed by their names
-#
-theFuncs={'euler':euler,'leapfrog':leapfrog, 'beuler':beuler}
-#
-# store the results in another dictionary
-#
-output={}
-#
-#end time = 100 minutes
-#
-tend=2.
-#
-# start at 30 degC, air temp of 20 deg C
-#
+tend=10.
 Ta=20.
 To=30.
-#
-# note that lambda is a reserved keyword in python so call this
-# thelambda
+theLambda=-8.
+npts=40
+funChoice=['euler' , 'beuler', 'leapfrog', 'midpoint']
 
-# -8 sec^-1 = 480 mins^-1
-theLambda=-8.  #units have to be per minute if time in minutes
+approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
+exactTime=np.empty([npts,],float)
+exactTemp=np.empty_like(exactTime)
+for i in np.arange(0,npts):
+    exactTime[i] = tend*i/npts
+    exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
+plt.close('all')
+plt.figure(1)
+plt.clf()
+plt.plot(exactTime,exactTemp,'r+')
+# plt.hold(True)
+plt.plot(approxTime,approxTemp)
+theAx=plt.gca()
+# theAx.set_xlim([0,10])
+# theAx.set_ylim([15,30])
+theAx.set_title('stability')
+plt.show()
 
+# %%
 
-# Define three diff step sizers
-npts= [30, 100, 10]
-title_label = ["30", "100", '10']
+fig,ax=plt.subplots(1,figsize=(16,8))
+for name,the_fun in theFuncs.items():
+    output[name]=the_fun(npts,tend,To,Ta,theLambda)
+# calculate the exact solution for comparison
+exactTime=np.empty([npts,],float)
+exactTemp=np.empty_like(exactTime)
+for i in np.arange(0,npts):
+    exactTime[i] = tend*i/npts
+    exactTemp[i] = Ta + (To-Ta)*np.exp(theLambda*exactTime[i])
+# now plot all four curves
+ax.plot(exactTime,exactTemp,'r+',label='exact')
+for fun_name in output.keys():
+    the_time,the_temp=output[fun_name]
+    ax.plot(the_time,the_temp,label=fun_name,lw=2)
+# ax.set_title("Number of timesteps:  " + title_label[i])
+# ax.set_xlim([0,2.])
+# ax.set_ylim([30.,90.])
+ax.grid(True)
+ax.set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
+out=ax.legend(loc='upper left')
 
-fig,ax=plt.subplots(1,3,figsize=(16,8))
-for i in range(len(npts)):
-    for name,the_fun in theFuncs.items():
-        output[name]=the_fun(npts[i],tend,To,Ta,theLambda)
-    # calculate the exact solution for comparison
-    exactTime=np.linspace(0,tend,npts[i])
-    exactTemp=Ta + (To-Ta)*np.exp(theLambda*exactTime)
-    # now plot all four curves
-    ax[i].plot(exactTime,exactTemp,label='exact',lw=2)
-    for fun_name in output.keys():
-        the_time,the_temp=output[fun_name]
-        ax[i].plot(the_time,the_temp,label=fun_name,lw=2)
-    ax[i].set_title("Number of timesteps:  " + title_label[i])
-    # ax[i].set_xlim([0,2.])
-    # ax[i].set_ylim([30.,90.])
-    ax[i].grid(True)
-    ax[i].set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
-    out=ax[i].legend(loc='upper left')
+# %% [markdown]
+# ### Chirs Rodell Lab2 Q3 continued
+
 
 
 

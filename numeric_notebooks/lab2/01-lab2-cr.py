@@ -514,26 +514,26 @@ out=ax.legend(loc='upper left')
 
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q1
-#
+
 # - a\) 
 # $$
 # y_{i-1}=y_{i}-h y_{i}^{\prime}+\frac{h^{2}}{2 !} y_{i}^{\prime \prime}-\frac{h^{3}}{3 !} y_{i}^{\prime \prime \prime}+\frac{h^{4}}{4 !} y_{i}^{\prime \prime \prime \prime}-\ldots
 # $$
-#
+
 # $$
 # y_{i}^{\prime}=\frac{y_{i}-y_{i-1}}{h}+\mathrm{O}(h)
 # $$
-#
-#
+
+
 # $$
 # \mathrm{O}(h) \cong \frac{h}{2} y_{i}^{\prime \prime}
 # $$
-#
+
 # - b/)
-#
+
 # Note sure as of yet will get back to this 
-#
-#
+
+
 
 # %% [markdown]
 # ### How can we control the error? <a name="Error-Control"></a>
@@ -629,8 +629,10 @@ out=ax.legend(loc='upper left')
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q2
 # - a/)
-# No increasing the orde of the scheme (or decreasing the time step)
-# does not always improve the solution (as apparent in 50 number of time steps).
+# No increasing the order of the scheme (or decreasing the time step)
+# does not always improve the solution (as apparent in 50 number of time steps). 
+# There there is a limit to how small  can be, beyond which round-off errors will
+# start polluting the computation
 # 
 # %%
 %matplotlib 

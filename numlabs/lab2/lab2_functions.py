@@ -67,7 +67,7 @@ def euler(npts,tend,To,Ta,theLambda):
 
 def beuler(npts,tend,To,Ta,theLambda):
     #pdb.set_trace()
-    dt=tend/npts;
+    dt=tend/npts
     theTemp=np.empty([npts,],np.float64)
     theTemp[0]=To
     theTime=np.zeros_like(theTemp)

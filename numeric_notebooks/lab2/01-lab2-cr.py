@@ -747,6 +747,17 @@ ax.set(xlabel='time (seconds)',ylabel='bar temp (deg C)')
 out=ax.legend(loc='upper left')
 
 # %% [markdown]
+# ### Chirs Rodell Lab2 Q2 continued
+# - c\)
+# Δtp is much smaller for large values of p. Thus large values of p 
+# result in small errors, and in general, numerical methods with high-order 
+# converge to the exact solution more quickly than do methods with low-order 
+# as long as the exact solution is sufficiently differentiable. 
+# $$
+# c \cdot(\Delta t)^{p}
+# $$
+
+# %% [markdown]
 # ### Other Approximations to the First Derivative <a name="Other-Approx"></a>
 #
 # The Taylor series method of deriving difference formulae for the first
@@ -933,7 +944,7 @@ for iii in range(len(tend)):
 
 # %% [markdown]
 # ### Chris Rodell Lab2 Q3 continued
-# - a\) As the dt decrease as does the stability. 
+# - a\) As the dt becomes smaller the stability increase.
 # You can see this in all the methods. However, 
 # leapfrog and midpoint become unstable first.
 

@@ -638,7 +638,7 @@ out=ax.legend(loc='upper left')
 
 
 # %%
-%matplotlib 
+# 
 plt.style.use('ggplot')
 #
 # save our three functions to a dictionary, keyed by their names

@@ -248,7 +248,7 @@ theFuncs={'euler':euler,'beuler':beuler,'leapfrog':leapfrog}
 #
 output={}
 #
-#end time = 10 minutes
+#end time = 10 seconds
 #
 tend=10.
 #
@@ -260,7 +260,7 @@ To=30.
 # note that lambda is a reserved keyword in python so call this
 # thelambda
 #
-theLambda=0.8  #units have to be per minute if time in minutes
+theLambda=0.8  #units have to be per seconds if time in seconds
 #
 # dt = 10/npts = 10/30 = 1/3
 #
@@ -283,7 +283,7 @@ for fun_name in output.keys():
 ax.set_xlim([0,2.])
 ax.set_ylim([30.,90.])
 ax.grid(True)
-ax.set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
+ax.set(xlabel='time (seconds)',ylabel='bar temp (deg C)')
 out=ax.legend(loc='upper left')
 
 # %% [markdown]
@@ -531,7 +531,9 @@ out=ax.legend(loc='upper left')
 
 # - b/)
 
-# Note sure as of yet will get back to this 
+# The leading term (constant h) is negative for backward Euler which
+#  is different from forwarding. This leads to an overestimation that
+#  becomes less as you include higher-order calculations. 
 
 
 
@@ -647,7 +649,7 @@ theFuncs={'euler':euler,'leapfrog':leapfrog,'runge':runge}
 #
 output={}
 #
-#end time = 10 minutes
+#end time = 10 seconds
 #
 tend=10.
 #
@@ -659,11 +661,11 @@ To=30.
 # note that lambda is a reserved keyword in python so call this
 # thelambda
 #
-theLambda=0.8  #units have to be per minute if time in minutes
+theLambda=0.8  #units have to be per seconds if time in seconds
 
 # Define three diff step sizers
-npts= [30, 1000, 10]
-title_label = ["30", "1000", '10']
+npts= [30, 1000, 12]
+title_label = ["30", "1000", '12']
 
 fig,ax=plt.subplots(1,3,figsize=(16,8))
 for i in range(len(npts)):
@@ -681,8 +683,9 @@ for i in range(len(npts)):
     ax[i].set_xlim([0,2.])
     ax[i].set_ylim([30.,90.])
     ax[i].grid(True)
-    ax[i].set(xlabel='time (minutes)',ylabel='bar temp (deg C)')
+    ax[i].set(xlabel='time (seconds)',ylabel='bar temp (deg C)')
     out=ax[i].legend(loc='upper left')
+
 
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q2 continued
@@ -690,13 +693,13 @@ for i in range(len(npts)):
 # $$
 # \text { global error }=\left|T\left(t_{n}\right)-T_{n}\right|
 # $$
-
-
-
+# Shows plot of the Perturbation of model and exact
+# 
 # %% 
 
-theFuncs={'euler':euler,'leapfrog':leapfrog,'runge':runge}
-
+# Define three diff step sizers
+npts= [30, 1000, 10]
+title_label = ["30", "1000", '10']
 ## Plt Global Error
 fig,ax=plt.subplots(1,3,figsize=(16,8))
 for i in range(len(npts)):
@@ -714,32 +717,34 @@ for i in range(len(npts)):
     ax[i].set_xlim([0,5.])
     ax[i].set_ylim([0.,90.])
     ax[i].grid(True)
-    ax[i].set(xlabel='time (minutes)',ylabel='Perturbation temp (deg C)')
+    ax[i].set(xlabel='time (seconds)',ylabel='Perturbation temp (deg C)')
     out=ax[i].legend(loc='upper left')
 
-## Plt Local Error
-fig,ax=plt.subplots(1,3,figsize=(16,8))
-for i in range(len(npts)):
-    for name,the_fun in theFuncs.items():
-        output[name]=the_fun(npts[i],tend,To,Ta,theLambda)
-    # calculate the exact solution for comparison
-    exactTime=np.linspace(0,tend,npts[i])
-    exactTemp=Ta + (To-Ta)*np.exp(theLambda*exactTime)
-    # now plot all four curves
-    # ax[i].plot(exactTime,exactTemp,label='exact',lw=2)
-    for fun_name in output.keys():
-        the_time,the_temp=output[fun_name]
-        ax[i].plot(the_time, abs(the_temp-exactTemp),label=fun_name,lw=2)
-    ax[i].set_title("Local Error for number of timesteps:  " + title_label[i])
-    ax[i].set_xlim([0,5.])
-    ax[i].set_ylim([0.,90.])
-    ax[i].grid(True)
-    ax[i].set(xlabel='time (minutes)',ylabel='Perturbation temp (deg C)')
-    out=ax[i].legend(loc='upper left')
+# %%
+# ### Chirs Rodell Lab2 Q2 continued
+# - b/)
+#Plot sfor howing local error and gloabl errro looking at eluer forward
+# (anottated plot is in the pdf I have turned in along with this notebook)
+# 
 
+npts= 20
 
+fig,ax=plt.subplots(1,figsize=(16,8))
 
-
+output_local =euler(npts,tend,To,Ta,theLambda)
+# calculate the exact solution for comparison
+exactTime=np.linspace(0,tend,npts)
+exactTemp=Ta + (To-Ta)*np.exp(theLambda*exactTime)
+# now plot all four curves
+ax.plot(exactTime,exactTemp,label='exact',lw=2)
+the_time,the_temp=output_local
+ax.plot(the_time,the_temp,label=fun_name,lw=2)
+ax.set_title("Number of timesteps:  20")
+ax.set_xlim([0,4.])
+ax.set_ylim([30.,90.])
+ax.grid(True)
+ax.set(xlabel='time (seconds)',ylabel='bar temp (deg C)')
+out=ax.legend(loc='upper left')
 
 # %% [markdown]
 # ### Other Approximations to the First Derivative <a name="Other-Approx"></a>
@@ -910,7 +915,6 @@ for iii in range(len(tend)):
     theFuncs={'euler':euler,'beuler':beuler, 'leapfrog':leapfrog,'midpoint':midpoint}
     fun=['euler' , 'beuler', 'leapfrog', 'midpoint']
 
-    # fig,ax=plt.subplots(1,4,figsize=(18,8))
     for ii in range(len(fun)):
         funChoice = fun[ii]
         approxTime,approxTemp=theFuncs[funChoice](npts,tend[iii],To,Ta,theLambda)
@@ -923,11 +927,12 @@ for iii in range(len(tend)):
         ax[iii,ii].plot(exactTime,exactTemp,'r+', label = ' exact')
         ax[iii,ii].plot(approxTime,approxTemp, label = funChoice, color = 'k')
         ax[iii,ii].set_ylim([0,50])
+        ax[iii,ii].set_xlim([0,tend[iii]])
         ax[iii,ii].legend()
-        ax[iii,ii].set_title(funChoice + ' dt of:  ' + str(tend[iii]/npts))
+        ax[iii,ii].set_title(funChoice + ' dt of:  ' + str(tend[iii]/npts), fontsize=10)
 
 # %% [markdown]
-# ### Chirs Rodell Lab2 Q3 continued
+# ### Chris Rodell Lab2 Q3 continued
 # - a\) As the dt decrease as does the stability. 
 # You can see this in all the methods. However, 
 # leapfrog and midpoint become unstable first.
@@ -982,6 +987,67 @@ for iii in range(len(tend)):
 # %% [markdown]
 # ### Chirs Rodell Lab2 Q4 
 ##
+#### Q4
+
+# $$
+# \frac{d z}{d t}=\lambda z
+# $$
+
+# $$
+# \frac{z_{i}-z_{i-1}}{\Delta t}=\lambda z_{i}
+# $$
+
+# $$
+# \frac{z_{i}}{z_{i} \Delta t}-\frac{z_{i-1}}{z_{i} \Delta t}=\lambda
+# $$
+
+# $$
+# \frac{1}{\Delta t}-\frac{z_{i-1}}{z_{i} \Delta t}=\lambda
+# $$
+
+# $$
+# \frac{1}{\Delta t}- \lambda=\frac{z_{i-1}}{z_{i} \Delta t}
+# $$
+
+# $$
+# 1-\lambda \Delta t=\frac{z_{i-1}}{z_{i}}
+# $$
+
+# $$
+# z_{i}=\frac{z_{i-1}}{1-\lambda \Delta t}
+# $$
+
+# $$
+# z_{i+1}=\frac{z_{i}}{1-\lambda \Delta t}
+# $$
+
+# $$
+# z_{i}=\left(\frac{1}{1-\lambda \Delta t}\right)^{i} \hat{z}
+# $$
+
+# $$
+# \left|\frac{1}{1-\lambda \Delta t}\right|<1
+# $$
+
+# becuase 
+
+# $$
+# \Delta t>0
+# $$
+
+# time can't go in reverse 
+
+# &
+# $$
+# \lambda<0
+# $$
+# so
+# $$
+# \Delta t\lambda<0
+# $$
+
+# Thus, backward Euler method is unconditionally
+# stable.
 
 
 # %% [markdown]
@@ -1110,6 +1176,71 @@ ax.legend(loc='best');
 #
 # -   b) Derive a higher order approximation.
 
+
+
+# %% [markdown]
+
+# ### Chirs Rodell Lab2 Q5
+
+# - a\) 
+
+
+# $$
+# y\left(t_{i+1}\right)=y\left(t_{i}\right)+y^{\prime}\left(t_{i}\right) \Delta t+\frac{y^{\prime \prime}\left(t_{i}\right)}{2 !}(\Delta t)^{2}+\frac{y^{\prime \prime \prime}\left(t_{i}\right)}{3 !}(\Delta t)^{3}+\frac{y^{\prime \prime \prime}\left(t_{i}\right)}{4 !}(\Delta t)^{4} \ldots(1)
+# $$
+
+
+# $$
+# \text { where } 
+# $$
+
+# $$
+# t_{i+1}=t_{i}+\Delta t
+# $$
+
+# $$
+# y\left(t_{i-1}\right)=y\left(t_{i}\right)-y^{\prime}\left(t_{i}\right) \Delta t+\frac{y^{\prime \prime}\left(t_{i}\right)}{2 !}(\Delta t)^{2}-\frac{y^{\prime \prime \prime}\left(t_{i}\right)}{3 !}(\Delta t)^{3}+\frac{y^{\prime \prime \prime \prime}\left(t_{i}\right)}{4 !}(\Delta t)^{4} \ldots \text { (2) }
+# $$
+
+# $$
+# \text { where } 
+# $$
+
+# $$
+# t_{i-1}=t_{i}-\Delta t
+# $$
+
+# $$
+# \text { Adding equations}(1)\text { and }(2), \text { gives }
+# $$
+
+# $$
+# y\left(t_{i+1}\right)+y\left(t_{i-1}\right)=2 y\left(t_{i}\right)+y^{\prime \prime}\left(t_{i}\right)(\Delta t)^{2}+y^{\prime \prime \prime}\left(t_{i}\right) \frac{(\Delta t)^{4}}{12}
+# $$
+
+# $$
+# y^{\prime \prime}\left(t_{i}\right)=\frac{y\left(t_{i+1}\right)-2 y\left(t_{i}\right)+y\left(t_{i-1}\right)}{(\Delta t)^{2}}-\frac{y^{\prime \prime \prime}\left(t_{i}\right)(\Delta t)^{2}}{12}
+# $$
+
+# $$
+# y^{\prime \prime}\left(t_{i}\right)=\frac{y\left(t_{i+1}\right)-2 y\left(t_{i}\right)+y\left(t_{i-1}\right)}{(\Delta t)^{2}}+\mathcal{O}(\Delta t)^{2}
+# $$
+# - b\) 
+# Same as above but for (1)
+
+# $$
+# t_{i+2}=t_{i}+2 \Delta t
+# $$
+
+# and for (2)
+
+# $$
+# t_{i-2}=t_{i}-2 \Delta t
+# $$
+
+# $$
+# y^{\prime \prime \prime}\left(t_{i}\right)=\frac{y\left(t_{i+2}\right)-2y\left(t_{i+1}\right) + y\left(t_{i-1}\right) - y\left(t_{i-2}\right)}{2(\Delta t)^{3}}+\mathcal{O}(\Delta t)^{3}
+# $$
 # %% [markdown]
 # ## Summary 
 #

@@ -1,36 +1,24 @@
 import numpy as np
 
+def diffmatrix(n):
+    """
+    This Function makes....
+    """
+    A = np.zeros((n,n))
+    for index in range(1,n-1):
+        A[index,index] = -2
+        A[index,index + 1] = A[index,index - 1] = 1
+        
+    A[0,0] = A[-1,-1] =1
+
+    condtion = np.linalg.cond(A)
+
+    return A, condtion
+
+## Loop and calcualte the condition number for the matrix (B)
+for size in range(5,55,5):
+    B, condtion = diffmatrix(size)
+    print(f"Matrix Size: {B.shape} Condition number: {condtion}")
 
 
 
-
-# a = np.array([[0.0001, 0.0001, 0.5],[0.5, 1, 1], [0.0001, 1, 0.0001]])
-
-# k = np.linalg.cond(a)
-
-# b = np.array([1, 0.0001, 0.5],[0.5, 1, 1], [0.0001, 1, 0.0001]])
-
-
-def diffmatrix(n,m):
-    x = np.zeros((n,m))
-    for i in x:
-        B = np.array([(i+1),(-2*i),(i-1)])
-    return B
-
-B =diffmatrix(50,40)
-
-
-
-# x = range(6)
-
-# for n in x:
-#   print(n)
-
-
-    # n = A.shape[0]
-    # E = np.eye(n)
-    # if i == j:
-    #     E[i,i] = k + 1
-    # else:
-    #     E[i,j] = k
-    # return E @ A

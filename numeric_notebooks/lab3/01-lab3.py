@@ -2,6 +2,7 @@
 # ---
 # jupyter:
 #   jupytext:
+#     cell_metadata_filter: all
 #     formats: ipynb,py:percent
 #     notebook_metadata_filter: all,-language_info,-toc,-latex_envs
 #     text_representation:
@@ -10,7 +11,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.3.1
 #   kernelspec:
-#     display_name: Python [default]
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
@@ -21,8 +22,8 @@
 # Grace Yung
 
 # %% [markdown] toc="true"
-#  # Table of Contents
-# <div class="toc" style="margin-top: 1em;"><ul class="toc-item" id="toc-level0"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Laboratory-3:-Linear-Algebra-(Sept.-12,-2017)" data-toc-modified-id="Laboratory-3:-Linear-Algebra-(Sept.-12,-2017)-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Laboratory 3: Linear Algebra (Sept. 12, 2017)</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#List-of-Problems" data-toc-modified-id="List-of-Problems-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>List of Problems</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Objectives" data-toc-modified-id="Objectives-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Objectives</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Prerequisites" data-toc-modified-id="Prerequisites-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Prerequisites</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Linear-Systems" data-toc-modified-id="Linear-Systems-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Linear Systems</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#What-is-a-Matrix?" data-toc-modified-id="What-is-a-Matrix?-1.4.1"><span class="toc-item-num">1.4.1&nbsp;&nbsp;</span>What is a Matrix?</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Quiz-on-Matrices" data-toc-modified-id="Quiz-on-Matrices-1.4.1.1"><span class="toc-item-num">1.4.1.1&nbsp;&nbsp;</span>Quiz on Matrices</a></span></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Quick-Review" data-toc-modified-id="Quick-Review-1.4.2"><span class="toc-item-num">1.4.2&nbsp;&nbsp;</span>Quick Review</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Gaussian-Elimination" data-toc-modified-id="Gaussian-Elimination-1.4.3"><span class="toc-item-num">1.4.3&nbsp;&nbsp;</span>Gaussian Elimination</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Decomposition" data-toc-modified-id="Decomposition-1.4.3.1"><span class="toc-item-num">1.4.3.1&nbsp;&nbsp;</span>Decomposition</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-One" data-toc-modified-id="Example-One-1.4.3.2"><span class="toc-item-num">1.4.3.2&nbsp;&nbsp;</span>Example One</a></span></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Round-off-Error" data-toc-modified-id="Round-off-Error-1.4.4"><span class="toc-item-num">1.4.4&nbsp;&nbsp;</span>Round-off Error</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Two" data-toc-modified-id="Example-Two-1.4.4.1"><span class="toc-item-num">1.4.4.1&nbsp;&nbsp;</span>Example Two</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Three" data-toc-modified-id="Example-Three-1.4.4.2"><span class="toc-item-num">1.4.4.2&nbsp;&nbsp;</span>Example Three</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Partial-Pivoting" data-toc-modified-id="Partial-Pivoting-1.4.4.3"><span class="toc-item-num">1.4.4.3&nbsp;&nbsp;</span>Partial Pivoting</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Four" data-toc-modified-id="Example-Four-1.4.4.4"><span class="toc-item-num">1.4.4.4&nbsp;&nbsp;</span>Example Four</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Full-Pivoting" data-toc-modified-id="Full-Pivoting-1.4.4.5"><span class="toc-item-num">1.4.4.5&nbsp;&nbsp;</span>Full Pivoting</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Five" data-toc-modified-id="Example-Five-1.4.4.6"><span class="toc-item-num">1.4.4.6&nbsp;&nbsp;</span>Example Five</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Summary" data-toc-modified-id="Summary-1.4.4.7"><span class="toc-item-num">1.4.4.7&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Matrix-Inversion" data-toc-modified-id="Matrix-Inversion-1.4.5"><span class="toc-item-num">1.4.5&nbsp;&nbsp;</span>Matrix Inversion</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Determinant" data-toc-modified-id="Determinant-1.4.6"><span class="toc-item-num">1.4.6&nbsp;&nbsp;</span>Determinant</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Six" data-toc-modified-id="Example-Six-1.4.6.1"><span class="toc-item-num">1.4.6.1&nbsp;&nbsp;</span>Example Six</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Seven" data-toc-modified-id="Example-Seven-1.4.6.2"><span class="toc-item-num">1.4.6.2&nbsp;&nbsp;</span>Example Seven</a></span></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Computational-cost-of-Gaussian-elimination" data-toc-modified-id="Computational-cost-of-Gaussian-elimination-1.4.7"><span class="toc-item-num">1.4.7&nbsp;&nbsp;</span>Computational cost of Gaussian elimination</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Problem-One" data-toc-modified-id="Problem-One-1.4.7.1"><span class="toc-item-num">1.4.7.1&nbsp;&nbsp;</span>Problem One</a></span></li></ul></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Eigenvalue-Problems" data-toc-modified-id="Eigenvalue-Problems-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Eigenvalue Problems</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Characteristic-Equation" data-toc-modified-id="Characteristic-Equation-1.5.1"><span class="toc-item-num">1.5.1&nbsp;&nbsp;</span>Characteristic Equation</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Eight" data-toc-modified-id="Example-Eight-1.5.1.1"><span class="toc-item-num">1.5.1.1&nbsp;&nbsp;</span>Example Eight</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Condition-Number" data-toc-modified-id="Condition-Number-1.5.1.2"><span class="toc-item-num">1.5.1.2&nbsp;&nbsp;</span>Condition Number</a></span></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Eigenvectors" data-toc-modified-id="Eigenvectors-1.5.2"><span class="toc-item-num">1.5.2&nbsp;&nbsp;</span>Eigenvectors</a></span><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Example-Nine" data-toc-modified-id="Example-Nine-1.5.2.1"><span class="toc-item-num">1.5.2.1&nbsp;&nbsp;</span>Example Nine</a></span></li></ul></li></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Iterative-Methods" data-toc-modified-id="Iterative-Methods-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Iterative Methods</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Solution-of-an-ODE-Using-Linear-Algebra" data-toc-modified-id="Solution-of-an-ODE-Using-Linear-Algebra-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>Solution of an ODE Using Linear Algebra</a></span><ul class="toc-item"><ul class="toc-item"><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Problem-Two" data-toc-modified-id="Problem-Two-1.7.0.1"><span class="toc-item-num">1.7.0.1&nbsp;&nbsp;</span>Problem Two</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Problem-Three" data-toc-modified-id="Problem-Three-1.7.0.2"><span class="toc-item-num">1.7.0.2&nbsp;&nbsp;</span>Problem Three</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Problem-Four" data-toc-modified-id="Problem-Four-1.7.0.3"><span class="toc-item-num">1.7.0.3&nbsp;&nbsp;</span>Problem Four</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Summary" data-toc-modified-id="Summary-1.7.0.4"><span class="toc-item-num">1.7.0.4&nbsp;&nbsp;</span>Summary</a></span></li></ul></ul></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#References" data-toc-modified-id="References-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>References</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Numpy-and-Python-with-Matrices" data-toc-modified-id="Numpy-and-Python-with-Matrices-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>Numpy and Python with Matrices</a></span></li><li><span><a href="http://localhost:8889/notebooks/lab3/01-lab3.ipynb#Glossary" data-toc-modified-id="Glossary-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>Glossary</a></span></li></ul></li></ul></div>
+# <h1>Table of Contents<span class="tocSkip"></span></h1>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#Laboratory-3:-Linear-Algebra-(Sept.-12,-2017)" data-toc-modified-id="Laboratory-3:-Linear-Algebra-(Sept.-12,-2017)-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Laboratory 3: Linear Algebra (Sept. 12, 2017)</a></span><ul class="toc-item"><li><span><a href="#List-of-Problems" data-toc-modified-id="List-of-Problems-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>List of Problems</a></span></li><li><span><a href="#Objectives" data-toc-modified-id="Objectives-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Objectives</a></span></li><li><span><a href="#Prerequisites" data-toc-modified-id="Prerequisites-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Prerequisites</a></span></li><li><span><a href="#Linear-Systems" data-toc-modified-id="Linear-Systems-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Linear Systems</a></span><ul class="toc-item"><li><span><a href="#What-is-a-Matrix?" data-toc-modified-id="What-is-a-Matrix?-1.4.1"><span class="toc-item-num">1.4.1&nbsp;&nbsp;</span>What is a Matrix?</a></span></li><li><span><a href="#Quick-Review" data-toc-modified-id="Quick-Review-1.4.2"><span class="toc-item-num">1.4.2&nbsp;&nbsp;</span>Quick Review</a></span></li><li><span><a href="#Gaussian-Elimination" data-toc-modified-id="Gaussian-Elimination-1.4.3"><span class="toc-item-num">1.4.3&nbsp;&nbsp;</span>Gaussian Elimination</a></span></li><li><span><a href="#Round-off-Error" data-toc-modified-id="Round-off-Error-1.4.4"><span class="toc-item-num">1.4.4&nbsp;&nbsp;</span>Round-off Error</a></span></li><li><span><a href="#Matrix-Inversion" data-toc-modified-id="Matrix-Inversion-1.4.5"><span class="toc-item-num">1.4.5&nbsp;&nbsp;</span>Matrix Inversion</a></span></li><li><span><a href="#Determinant" data-toc-modified-id="Determinant-1.4.6"><span class="toc-item-num">1.4.6&nbsp;&nbsp;</span>Determinant</a></span></li><li><span><a href="#Computational-cost-of-Gaussian-elimination" data-toc-modified-id="Computational-cost-of-Gaussian-elimination-1.4.7"><span class="toc-item-num">1.4.7&nbsp;&nbsp;</span>Computational cost of Gaussian elimination</a></span></li></ul></li><li><span><a href="#Eigenvalue-Problems" data-toc-modified-id="Eigenvalue-Problems-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Eigenvalue Problems</a></span><ul class="toc-item"><li><span><a href="#Characteristic-Equation" data-toc-modified-id="Characteristic-Equation-1.5.1"><span class="toc-item-num">1.5.1&nbsp;&nbsp;</span>Characteristic Equation</a></span></li><li><span><a href="#Eigenvectors" data-toc-modified-id="Eigenvectors-1.5.2"><span class="toc-item-num">1.5.2&nbsp;&nbsp;</span>Eigenvectors</a></span></li></ul></li><li><span><a href="#Iterative-Methods" data-toc-modified-id="Iterative-Methods-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Iterative Methods</a></span></li><li><span><a href="#Solution-of-an-ODE-Using-Linear-Algebra" data-toc-modified-id="Solution-of-an-ODE-Using-Linear-Algebra-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>Solution of an ODE Using Linear Algebra</a></span></li><li><span><a href="#References" data-toc-modified-id="References-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>References</a></span></li><li><span><a href="#Numpy-and-Python-with-Matrices" data-toc-modified-id="Numpy-and-Python-with-Matrices-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>Numpy and Python with Matrices</a></span></li><li><span><a href="#Glossary" data-toc-modified-id="Glossary-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>Glossary</a></span></li></ul></li></ul></div>
 
 # %% [markdown]
 # ## List of Problems
@@ -57,8 +58,10 @@
 #
 #
 # <div style="padding-top:1.5cm">
-# [<span style='font-size:7em'>&#x1F43E;</span>  Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 # when you are not sure what
 # functions to use, and this will lead you to the mini-manual.
@@ -69,10 +72,12 @@
 # You should have had an introductory course in linear algebra.
 
 # %%
+# import the context to find files
+import context
 # import the quiz script
 from numlabs.lab3 import quiz3
-# import image handling
-from IPython.display import Image
+
+
 
 # %% [markdown]
 # ## Linear Systems
@@ -167,7 +172,7 @@ from IPython.display import Image
 # In the following, replace 'x' by 'A', 'B', 'C', or 'D' and run the cell.
 
 # %%
-print (quiz3.matrix_quiz(answer = 'x'))
+print(quiz3.matrix_quiz(answer = 'B'))
 
 # %% [markdown]
 # ### Quick Review
@@ -206,15 +211,16 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #
 # 8.  $AA$
 #
-# The solutions to these exercises are available [here](https://clouds.eos.ubc.ca/~phil/numeric/quizzes3/quick/quick.html)
+# The solutions to these exercises are available [here](lab3_files/quizzes/quick/quick.html)
 #
 # After solving the questions by hand, you can also use Python to check
 # your answers.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 
 # %% [markdown]
@@ -249,15 +255,16 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #         E_{3j}: & x_{1} & + & 2x_{2} & - & x_{3} & = & 13
 # \end{array}$$
 #
-# The solution to this problem is available [here](http://clouds.eos.ubc.ca/~phil/numeric/quizzes3/gaus/gaus.html)
+# The solution to this problem is available [here](lab3_files/quizzes/gaus/gaus.html)
 #
 # After solving the system by hand, you can use Python to check your
 # answer.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 
 # %% [markdown]
@@ -403,11 +410,11 @@ print (quiz3.matrix_quiz(answer = 'x'))
 # direct methods of solving linear systems (of which Gaussian elimination
 # is only one) and for methods for finding eigenvalues ([Characteristic Equation](#Characteristic-Equation)).
 #
-# <div align='right'>
-# <span style='font-size:5em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
 #
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 
 # %% [markdown]
 # ### Round-off Error
@@ -551,11 +558,11 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #
 # > You can try the example with Python.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
 #
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 
 # %% [markdown]
@@ -633,10 +640,11 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #
 # > You can try the example with Python.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 #
 #
@@ -814,10 +822,11 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #
 # > You can try the example with Python.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 
 # %% [markdown]
@@ -861,15 +870,16 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #                                         -3 &  1 & -5 \\
 #                                          2 & -1 &  3     \end{array} \right]$$
 #
-# The solutions to these exercises are available [here](http://clouds.eos.ubc.ca/~phil/numeric/quizzes3/inverse/inverse.html)
+# The solutions to these exercises are available [here](lab3_files/quizzes/inverse/inverse.html)
 #
 # After solving the questions by hand, you can use Python to check your
 # answer.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 
 # %% [markdown]
@@ -913,8 +923,8 @@ print (quiz3.matrix_quiz(answer = 'x'))
 #     
 # > Graphically, the parallelogram looks as follows:
 
-# %%
-Image(filename='images/det-plot.png', width='60%')
+# %% [markdown]
+# <img src='images/det-plot.png' width='60%' />
 
 # %% [markdown]
 # The basic procedure in finding a determinant of a matrix larger than 2
@@ -987,15 +997,16 @@ Image(filename='images/det-plot.png', width='60%')
 #                                         0 &  1 & -5 &  3
 #     \end{array} \right]$$
 #
-# The solutions to these exercises are available [here](http://clouds.eos.ubc.ca/~phil/numeric/quizzes3/det/det.html)
+# The solutions to these exercises are available [here](lab3_files/quizzes/det/det.html)
 #
 # After solving the questions by hand, you can use Python to check your
 # answer.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 
 # %% [markdown]
 # ### Computational cost of Gaussian elimination
@@ -1088,8 +1099,8 @@ Image(filename='images/det-plot.png', width='60%')
 # -   d\) For part c) above, what needs to be specified in order to determine a
 #     single physical solution. How would you put this in the matrix equation.
 
-# %%
-Image(filename='images/C_cycle_problem.png', width='60%')
+# %% [markdown]
+# <img src='images/C_cycle_problem.png' width='60%' />
 
 # %% [markdown]
 # <div id="Figure-Box-Model">
@@ -1153,15 +1164,16 @@ Image(filename='images/C_cycle_problem.png', width='60%')
 #    \begin{array}{ccc}  3 & 2 & 4 \\ 2 & 0 & 2 \\ 4 & 2 & 3
 #    \end{array}    \right]$$
 #
-# The solution to this problem is available [here](http://clouds.eos.ubc.ca/~phil/numeric/quizzes3/char/char.html)
+# The solution to this problem is available [here](lab3_files/quizzes/char/char.html)
 #
 # After solving the questions by hand, you can use Python to check your
 # answer.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 
 # %% [markdown]
@@ -1310,15 +1322,16 @@ Image(filename='images/C_cycle_problem.png', width='60%')
 #    \begin{array}{ccc}  3 & 2 & 4 \\ 2 & 0 & 2 \\ 4 & 2 & 3
 #    \end{array}    \right]$$
 #
-# The solution to this problem is available [here](http://clouds.eos.ubc.ca/~phil/numeric/quizzes3/eigvec/eigvec.html)
+# The solution to this problem is available [here](lab3_file/quizzes/eigvec/eigvec.html)
 #
 # After solving the questions by hand, you can use Python to check your
 # answer.
 #
-# <div align='right'>
-# <span style='font-size:7em'>
-# [&#x1F43E;](#Numpy-and-Python-with-Matrices)</span>
+# <div style="padding-top:1.5cm">
+# <span style='font-size:7em'>&#x1F43E;</span> 
 # </div>
+#
+# [Numpy and Python with Matrices](#Numpy-and-Python-with-Matrices)
 #
 # Although the method used here to find the eigenvalues is a direct way to
 # find the solution, it is not very efficient, especially for large

@@ -73,7 +73,7 @@ A_list[0]
 
 ## Plt condition number (K) v N size of matirx 𝐴 
 fig,ax=plt.subplots(1,figsize=(16,8))
-ax.set_title("Condition number (K) v N size of matirx A ")
+ax.set_title("Condition number (K) v N size of matirx")
 # ax.scatter(N,KA_list, marker = '+', color = 'red')
 ax.plot(N,KA_list, color = 'blue', lw = 1.5)
 ax.grid(True)
@@ -175,4 +175,53 @@ ax.legend()
 ax.set(xlabel='N (size of one side of matrix)',ylabel='Condtion Number (K)')
 
 
+
+
+
+
+
+
+
+
+
+
+# %% [markdown]
+# #### Problem FIve: Consider a long hallway in an office building. If we assume that any
+# cigarrette smoke, mixes across the width of the hallway and vertically
+# through the depth of the hallway much faster than it mixes along the
+# hallway, we can write the diffusion of cigaratte smoke as an equation
+# where S is the concentration of smoke, κ is the rate of diffusion of
+# smoke, γ is the rate at which the smoke sticks to the walls or otherwise
+# leaves the system, α(x) is the sources of smoke, t is the time and x is
+# distance along the hallway.
+#
+# $$
+# \partial S / \partial t=\kappa \frac{\partial^{2} S}{\partial x^{2}}-\gamma S+\alpha(x)
+# $$
+#
+# - a\) Write the appropriate equation for the steady state.
+# 
 # %%
+
+
+def Neumann(N):
+    """
+    This function that outputs a 
+    matrix 𝐴 for a given value of N
+    """
+    A = np.zeros((N,N))
+    for index in range(1,N-1):
+        A[index,index] = -2
+        A[index,index + 1] = A[index,index - 1] = 1
+
+    A[0,0] = A[-1,-1] =1
+    A3 = A[1:-1,1:-1]
+    A3[0,1] = A3[-1,-2] = 2
+    c = np.full(A3.shape[0],1)
+
+    c = (c/N)
+    A3 =np.vstack([A3,c])
+
+    KA3 = np.linalg.cond(A3)
+
+    return A3, KA3

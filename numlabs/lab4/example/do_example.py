@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import context
 import json
-from collections import namedtuple
+from numlabs.lab4.example.init_conditions import get_init
+
 
 def derivs4(coeff, y):
   f=np.empty_like(y) #create a 2 element vector to hold the derivitive
@@ -13,15 +15,6 @@ def euler4(coeff,y,derivs):
   ynew=y + coeff.dt*derivs(coeff,y)
   return ynew
 
-def read_init(filename):
-  with open(filename,'r') as f:
-      init_dict=json.load(f)
-  #
-  #convert dictionary to namedtuple
-  #
-  initvals=namedtuple('initvals','dt c1 c2 t_beg t_end yinitial comment plot_title')
-  theCoeff=initvals(**init_dict)
-  return theCoeff
 
 def midpoint4(coeff, y, derivs):
   ynew = y + coeff.dt*derivs(coeff,y + (0.5 * coeff.dt * derivs(coeff,y)))
@@ -37,14 +30,12 @@ def rk4ODE(coeff, y, derivs):
 
 if __name__ == "__main__":
 
-  infile='run_1.json'
-  coeff=read_init(infile)
+  coeff=get_init()
   time=np.arange(coeff.t_beg,coeff.t_end,coeff.dt)
   y=coeff.yinitial
   nsteps=len(time) 
   savedata=np.empty([nsteps],'float')
   for i in range(nsteps):
-    print(type(y))
     y=euler4(coeff,y,derivs4)
     savedata[i]=y[0]
 

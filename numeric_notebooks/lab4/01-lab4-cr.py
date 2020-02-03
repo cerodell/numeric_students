@@ -158,7 +158,7 @@ for stepsize in range(len(dt)):
         y2=ynew
     analytic=timeVec + np.exp(-timeVec)
     theAx=theFig.add_subplot(2, 2, (stepsize +1))
-    l1=theAx.plot(timeVec,analytic,'b-',label='analytic', lw = 4, alpha = 0.3)
+    l1=theAx.plot(timeVec,analytic,'b-',label='analytic', lw = 2, alpha = 0.3)
     theAx.set_xlabel('time (seconds)')
     l2=theAx.plot(timeVec,yrkck,'g-',label='rkck')
     l3=theAx.plot(timeVec,yrk,'m-',label='rk')
@@ -176,8 +176,19 @@ for stepsize in range(len(dt)):
 #  Hand in a fresh notebook with the code and a plot.
 # %%
 
+
+
+# %%
 import json
 from numlabs.lab4.example.do_example import get_init,euler4
+
+def heun(coeff, y, derivs):
+  k1 = coeff.dt * derivs(coeff,y)
+  k2 = coeff.dt * derivs(coeff,y + ((2/3) * k1))
+  ynew = y + (1.0/6.0) * (k1 + (2.0 * k2) + (2.0 * k3) + k4)
+  return ynew
+
+
 #
 # specify the derivs function
 #
@@ -208,3 +219,5 @@ theAx.plot(time,savedata,'o-')
 theAx.set_title(coeff.plot_title)
 theAx.set_xlabel('time (seconds)')
 theAx.set_ylabel('y0')
+
+# %%

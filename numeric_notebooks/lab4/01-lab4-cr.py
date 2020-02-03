@@ -42,10 +42,18 @@
 #     three methods appears more accurate?
 #
 # **Based on the numeric solution of Eq: Test the fourth-order 
-# Runge-Kutta appears most accurate.**
+# Runge-Kutta appears most accurate?**
 #
+# $$
+# \\
+# $$
 # 2.  Again determine how the error changes relative to the change in
 #     stepsize, as the stepsize is halved.
+#
+# **The error in all methods decreases as the step size decreases. 
+#  However, Elure forward becomes much less stable than that of Runge-Kutta
+#  and mid-point as the step size increase. In general, Runge-Kutta 
+#  performs best and has the least error at the four-step sizes plotted.**
 # %%
 %matplotlib 
 import context
@@ -88,8 +96,115 @@ for stepsize in range(len(dt)):
     theAx.legend(loc='best')
     theAx.set_title('interactive 4.2 dt: ' + str(dt[stepsize]))
 
+# %% [markdown]
+
+# ## Problem embedded
+# Though the error estimate is for the embedded fourth-order Runge-Kutta method, 
+# the fifth-order method can be used in practice for calculating the solution, 
+# the assumption being the fifth-order method should be at least as accurate as 
+# the fourth-order method. In the demo below, compare solutions of the test problem EQ:test
+# $$
+# \\
+# $$
+# *EQ: Test*
+# $$
+# \frac{dy}{dt} = -y +t +1,  \;\;\;\; y(0) =1
+# $$ 
+# $$
+# \\
+# $$
+# - a\) Which method is more accurate?
+#
+# **The Runge-Kutta initialize with the Cash-Karp coefficients (RKCK) 
+# was more accurate at each time steep.....though you need to zoom in 
+# to view on the order of 10^-6 to see a discernible difference.**
+#
+# $$
+# \\
+# $$
+#
+# - b\) Again, determine how the error decreases as you halve the stepsizes.
+#
+# **Again, error in all methods decreases as the step size decreases. However, 
+#  in this case, Runge-Kutta not initialized with the Cash-Karp coefficients
+#  (RK) had a tinny bit more error than RKCK.**
+
+# %%
+from numlabs.lab4.lab4_functions import initinter41,rk4ODEinter41,rkckODEinter41
+
+dt = [0.4, 0.20, 0.10, 0.05]
+theFig=plt.figure(figsize = [10,10])
+theFig.clf()
+
+for stepsize in range(len(dt)):
+    initialVals={'yinitial': 1,'t_beg':0.,'t_end':1.,'dt':dt[stepsize],'c1':-1.,'c2':1.,'c3':1.}
+    coeff = initinter41(initialVals)
+    timeVec=np.arange(coeff.t_beg,coeff.t_end,coeff.dt)
+    nsteps=len(timeVec)
+    ye=[]
+    ym=[]
+    yrk=[]
+    yrkck=[]
+    y1=coeff.yinitial
+    y2=coeff.yinitial
+    yrk.append(coeff.yinitial)
+    yrkck.append(coeff.yinitial)
+    for i in np.arange(1,nsteps):
+        ynew=rk4ODEinter41(coeff,y1,timeVec[i-1])
+        yrk.append(ynew)
+        y1=ynew
+        ynew=rkckODEinter41(coeff,y2,timeVec[i-1])
+        yrkck.append(ynew)
+        y2=ynew
+    analytic=timeVec + np.exp(-timeVec)
+    theAx=theFig.add_subplot(2, 2, (stepsize +1))
+    l1=theAx.plot(timeVec,analytic,'b-',label='analytic', lw = 4, alpha = 0.3)
+    theAx.set_xlabel('time (seconds)')
+    l2=theAx.plot(timeVec,yrkck,'g-',label='rkck')
+    l3=theAx.plot(timeVec,yrk,'m-',label='rk')
+    theAx.legend(loc='best')
+    theAx.set_title('interactive 4.3 dt:  ' + str(dt[stepsize]))
+
+# %% [markdown]
+
+# ## Problem coding A
+# As set up above, do_example.py solves the damped, harmonic 
+# oscillator with the (unstable) forward Euler method.
+#
+# - 1\) Write a new routine that solves the harmonic oscilator 
+# using Heun’s method along the lines of the routines in lab4_functions.py
+#  Hand in a fresh notebook with the code and a plot.
 # %%
 
+import json
+from numlabs.lab4.example.do_example import get_init,euler4
+#
+# specify the derivs function
+#
+def derivs(coeff, y):
+  f=np.empty_like(y) #create a 2 element vector to hold the derivitive
+  f[0]=y[1]
+  f[1]= -1.*coeff.c1*y[1] - coeff.c2*y[0]
+  return f
+#
+# first make sure we have an input file in this directory
+#
 
+coeff=get_init()
 
+#
+# integrate and save the result in savedata
+#
+time=np.arange(coeff.t_beg,coeff.t_end,coeff.dt)
+y=coeff.yinitial
+nsteps=len(time)
+savedata=np.empty([nsteps],np.float64)
+for i in range(nsteps):
+    y=euler4(coeff,y,derivs)
+    savedata[i]=y[0]
 
+theFig,theAx=plt.subplots(1,1,figsize=(8,8))
+theAx.plot(time,savedata,'o-')
+theAx.set_title(coeff.plot_title)
+theAx.set_xlabel('time (seconds)')
+theAx.set_ylabel('y0')

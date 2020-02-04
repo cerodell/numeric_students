@@ -232,6 +232,17 @@ theAx.set_ylabel('y0')
 # Choose two sets of initial conditions and determine if there is any 
 # difference between the two methods when applied to either problem. 
 # Should there be? Explain by analyzing the steps that each method is taking.
+#
+# **There is no difference between the two solutions even with varied time steps. 
+# I would think there be a slight difference however both are second-order 
+# solutions. The steps that each method takes are slightly varied with Heus
+#  requiring more steps in its calculation. This makes Heuns a bit more 
+# computationly expensive compared to a midpoint.**
+# $$
+# \\
+# $$
+# - 2\) Add your answer as new cells to the problem A notebook
+# *See cell below**
 # %%
 
 from numlabs.lab4.lab4_functions import initinter41,derivsinter41,midpointinter41
@@ -275,4 +286,58 @@ for stepsize in range(len(dt)):
     theAx.legend(loc='best')
     theAx.set_title('interactive 4.2 dt: ' + str(dt[stepsize]))
 
+# %% [markdown]
+# ## Problem coding C
+# - 1\) Solve the Newtonian cooling equation of lab 1 by any of the above methods.
+# $$
+# \frac{d T}{d t} \quad=-\lambda \quad\left(T-T_{a}\right)
+# $$
+# **Used the Heuns Methods in solving for the cooling equation.
+#  Used varied dt and lambda values.**
+# - 2\) Add cells that do this and also generate some plots, 
+# showing your along with the parameter values and initial conditions.
+#
+# **See cell below**
 # %%
+
+
+npts = [20, 10, 8, 5] 
+tend = 1
+To  = 100
+Ta  = 50
+theLambda = [-4, -2, -1, -0.5]
+
+def heat(theTemp,Ta,theLambda):
+    out=theLambda*(theTemp-Ta)
+    return out
+
+def heunfun(npts,tend,To,Ta,theLambda):
+    dt=tend/npts
+    theTemp=np.empty([npts,],np.float64)
+    theTemp[0]=To
+    theTime=np.empty_like(theTemp)
+    theTime[0] = 0
+    for i in np.arange(1,npts):
+        k1 = coeff.dt * heat(theTemp[i-1],Ta,theLambda)
+        k2 = dt * heat(theTemp[i-1] + ((2.0/3.0) * k1),Ta,theLambda)
+        theTemp[i] = theTemp[i-1] + (1.0/4.0) * (k1 + (3.0 * k2))
+        theTime[i] = theTime[i-1]+dt
+    return (theTime,theTemp)
+
+
+theFig=plt.figure(figsize = [10,10])
+theFig.clf()
+
+for stepsize in range(len(npts)):
+    for i in range(len(theLambda)):
+        theTime,theTemp = heunfun(npts[stepsize],tend,To,Ta,theLambda[i])
+        theAx=theFig.add_subplot(2, 2, (stepsize +1))
+        theAx.set_xlabel('Time (seconds)')
+        theAx.set_ylabel('Temp (degC)')
+        l4=theAx.plot(theTime,theTemp,label= ( "Lamda:  "
++ str(theLambda[i])))
+        theAx.legend(loc='best')
+        theAx.set_title('Cooling Eq Heun Dt: ' + str(round((tend/npts[stepsize]),3)))
+
+
+

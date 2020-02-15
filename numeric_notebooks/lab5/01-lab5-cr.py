@@ -261,15 +261,25 @@ class IntegCoupling(Integrator):
 # %%
 import matplotlib.pyplot as plt
 
-newL = np.arange(0,1,0.05)
-theSolver = IntegCoupling("coupling.yaml", 0.2)
-timeVals, yVals, errorList = theSolver.timeloop5fixed()
 
-thefig, theAx = plt.subplots(1, 1)
-theLines = theAx.plot(timeVals, yVals)
-theAx.set_title('lab 5: interactive 2 Coupling with grey daisies')
-theAx.set_xlabel('time')
-theAx.set_ylabel('fractional coverage')
-out = theAx.legend(theLines, ('grey daisies', ), loc='best')
+
+newL = np.arange(0,1,0.05)
+theFig=plt.figure(figsize = [12,12])
+theFig.suptitle('lab 5: interactive 2 Coupling with grey daisies', fontsize = 14)
+# Set common labels
+theFig.text(0.5, 0.04, 'time', ha='center', va='center', fontsize = 14)
+theFig.text(0.06, 0.5, 'fractional coverage', ha='center', va='center', rotation='vertical',fontsize = 14)
+
+for L in range(len(newL)):
+    theSolver = IntegCoupling("coupling.yaml", newL[L])
+    timeVals, yVals, errorList = theSolver.timeloop5fixed()
+
+    theAx=theFig.add_subplot(5, 4, (L +1))
+    theLines = theAx.plot(timeVals, yVals)
+    theAx.set_ylim(0,1)
+    theAx.set_title(f'L({round(newL[L],2)})')
+theFig.tight_layout(pad=6.00, h_pad = 2.0)
+# theAx.set_ylabel('fractional coverage')
+# out = theAx.legend(theLines, ('grey daisies', ), loc='best')
 
 # %%

@@ -222,9 +222,7 @@ class IntegCoupling(Integrator):
         self.nvars = len(self.yinit)
         return None
 
-    def __init__(self, coeffFileName):
-        super().__init__(coeffFileName)
-        self.set_yinit()
+
 
     def __init__(self, coeffFileName, newL):
        super().__init__(coeffFileName)
@@ -244,8 +242,14 @@ class IntegCoupling(Integrator):
         x = 1.0 - y[0]
         albedo_p = x * user.albedo_ground + y[0] * user.albedo_grey
         Te_4 = user.S0 / 4.0 * user.L * (1.0 - albedo_p) / sigma
+
+        self.Te_4 = Te_4 ## SAVES TO SELF!!!!
+
         eta = user.R * user.L * user.S0 / (4.0 * sigma)
         temp_y = (eta * (albedo_p - user.albedo_grey) + Te_4)**0.25
+
+        self.temp_y = temp_y ## SAVES TO SELF!!!!
+
         if (temp_y >= 277.5 and temp_y <= 312.5):
             beta_y = 1.0 - 0.003265 * (295.0 - temp_y)**2.0
         else:
@@ -254,32 +258,31 @@ class IntegCoupling(Integrator):
         # create a 1 x 1 element vector to hold the derivative
         f = np.empty([self.nvars], np.float64)
         f[0] = y[0] * (beta_y * x - user.chi)
+
         return f
 
 
 
 # %%
-import matplotlib.pyplot as plt
+
+newL = np.arange(0,1,0.01)
 
 
-
-newL = np.arange(0,1,0.05)
-theFig=plt.figure(figsize = [12,12])
-theFig.suptitle('lab 5: interactive 2 Coupling with grey daisies', fontsize = 14)
-# Set common labels
-theFig.text(0.5, 0.04, 'time', ha='center', va='center', fontsize = 14)
-theFig.text(0.06, 0.5, 'fractional coverage', ha='center', va='center', rotation='vertical',fontsize = 14)
-
-for L in range(len(newL)):
-    theSolver = IntegCoupling("coupling.yaml", newL[L])
+temp_y_list, Te_4_list  = [], []
+for L in newL:
+    theSolver = IntegCoupling("coupling.yaml", L)
     timeVals, yVals, errorList = theSolver.timeloop5fixed()
+    temp_y = theSolver.temp_y
+    temp_y_list.append(temp_y)
+    Te_4 =theSolver.Te_4
+    Te_4_list.append(Te_4)
 
-    theAx=theFig.add_subplot(5, 4, (L +1))
-    theLines = theAx.plot(timeVals, yVals)
-    theAx.set_ylim(0,1)
-    theAx.set_title(f'L({round(newL[L],2)})')
-theFig.tight_layout(pad=6.00, h_pad = 2.0)
-# theAx.set_ylabel('fractional coverage')
-# out = theAx.legend(theLines, ('grey daisies', ), loc='best')
+
+fig, ax = plt.subplots(1,figsize=(15,15))
+fig.suptitle('Te v L', fontsize=16)
+ax.scatter(Te_4_list, newL)
+ax.set_xlabel('Emission Temperature K')
+ax.set_ylabel('Fraction of Solar Flux Density L()')
+
 
 # %%

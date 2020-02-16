@@ -179,10 +179,15 @@ thefig.savefig(str(lab_dir)+'/images/error_' +str(title_plot))
 # $$
 # \\
 # $$
-# **Referance Code Below**
+# **Referance Code/Plot Below**
 # $$
 # \\
 # $$
+# **The Emissions Temperature [Te] and Fraction of Solar Flux Density [L()]
+#  an approximate expontial growth with one another until ~ L(0.6) where Daisyworld
+#  reaches and non-zero steady-state. After which it the growth begins and somewhat
+#  hints towards leveling off above L(1)**
+#
 
 # %%
 import matplotlib.pyplot as plt
@@ -265,24 +270,77 @@ class IntegCoupling(Integrator):
 
 # %%
 
-newL = np.arange(0,1,0.01)
+## make array of fractional L values
+newL = np.arange(0,1,0.05)
 
-
-temp_y_list, Te_4_list  = [], []
+## Loop and append temp and emssions temp based off L valuse 
+temp_y_list, temp_e_list  = [], []
 for L in newL:
     theSolver = IntegCoupling("coupling.yaml", L)
     timeVals, yVals, errorList = theSolver.timeloop5fixed()
     temp_y = theSolver.temp_y
     temp_y_list.append(temp_y)
     Te_4 =theSolver.Te_4
-    Te_4_list.append(Te_4)
+    temp_e = Te_4**0.25
+    temp_e_list.append(temp_e)
 
-
-fig, ax = plt.subplots(1,figsize=(15,15))
+## Plot L v Te
+fig, ax = plt.subplots(1,figsize=(10,10))
 fig.suptitle('Te v L', fontsize=16)
-ax.scatter(Te_4_list, newL)
+ax.scatter(temp_e_list, newL)
 ax.set_xlabel('Emission Temperature K')
 ax.set_ylabel('Fraction of Solar Flux Density L()')
 
+
+# %% [markdown]
+# ## Problem Coupling cont.
+# - 4\) Do you see any difference between the daisy temperature and emission temperature?
+#  Plot both and explain. (Hint: I modified derivs5 to save these variables to self 
+# so I could compare their values at the end of the simulation. You could also override 
+# timeloop5fixed to do the same thing at each timestep.)
+# $$
+# \\
+# $$
+# **There is not any difference between the daisy temperature and emission temperature until 
+# you get to large fractional solar flux density values (ie warm temps). This is because the
+#  ’grey’ or neutral daisies are not influencing the temperature on the planet. 
+# Only the fractional solar flux density affects temperature.**
+
+# \\
+# $$
+# **Referance Code/Plot Below**
+# $$
+# \\
+# $$
+# - 5\) How (i.e. thorugh what mechanism) does the makeup
+#  of the global daisy population affect the local temperature?
+# $$
+# \\
+# $$
+# **The albedo of the grey daisies and the ground albedo are affecting 
+# the local temperature. Interestingly as the value of the fractional 
+# solar flux density exceeds the albedo value of the grey daisy you 
+# see a non-zero steady-state. So the mechanism is that the amount of
+#  energy coming in needs to exceed the amount of energy going out to
+#  have a suitable climate for the grey daisies to live.**
+# %%
+
+## Plot T v Te
+fig, ax = plt.subplots(1,figsize=(10,10))
+fig.suptitle('Te v L', fontsize=16)
+ax.scatter(temp_e_list, temp_y_list)
+ax.set_xlabel('Emission Temperature K')
+ax.set_ylabel('Daisy Temperature K')
+
+# %% [markdown]
+
+# ## Problem initial
+#
+# - 1\) Add a small initial fraction of black daisies (say, 0.01) to the value in initial.yaml 
+# and see what effect this has on the temperature and final daisy populations. 
+# Do you still have a final non-zero daisy population?
+# $$
+# \\
+# $$
 
 # %%

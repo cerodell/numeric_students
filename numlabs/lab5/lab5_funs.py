@@ -262,6 +262,8 @@ class Integrator:
         """
         t = self.timevars
         yold = self.yinit
+
+
         yError = np.zeros_like(yold)
         yvals = [yold]
         errorList = [yError]

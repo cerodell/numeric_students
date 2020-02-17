@@ -51,7 +51,7 @@
 # $$
 # **However, for the case of Dasiy world, I was only able to determine 
 # and non-zero steady state when the intail condition was not physical 
-# (having a large fractional coverage for both daises exceeding a value of 1)
+# (having a larger fractional coverage for both daises exceeding a value of 1)
 # . When examing only a physical scenario the fractional coverage always
 #  tended to something stable through time. Whether there be daisy living or not.**
 # %% 
@@ -359,9 +359,22 @@ ax.set_ylabel('Daisy Temperature K')
 # $$ 
 # \\
 # $$
-# **
-
-
+# **No matter the values of the fractional coverage for the white daisies
+#  population I cant not determine a non-zero steady state. This is because how we 
+#  define daisy world, there is not an imbalance in the feedback for
+#  how each of the populations responded to one other.**
+# $$ 
+# \\
+# $$
+# - 3\) Experiment with other initial fractions of daisies and 
+# look for non-zero steady states.
+# $$ 
+# \\
+# $$
+# **Again, No matter the values of the fractional coverage for either
+#  daisy population I cant not determine a non-zero. This is because 
+#  how we define the daisy world there is now an imbalance in the feedback
+#   for how each of the populations responded to each other.**
 
 # %%
 from numlabs.lab5.lab5_funs import Integrator
@@ -407,6 +420,8 @@ class Integ54(Integrator):
         eta = user.R * user.L * user.S0 / (4.0 * sigma)
         temp_b = (eta * (albedo_p - user.albedo_black) + Te_4)**0.25
         temp_w = (eta * (albedo_p - user.albedo_white) + Te_4)**0.25
+
+
         return (temp_w, temp_b, temp_e)
 
     def derivs5(self, y, t):
@@ -432,6 +447,10 @@ class Integ54(Integrator):
         f = np.empty_like(y)
         f[0] = y[0] * (beta_w * bare - user.chi)
         f[1] = y[1] * (beta_b * bare - user.chi)
+
+        # self.temp_e = temp_e
+        # self.temp_b = temp_b
+        # self.temp_w = temp_w
         return f
 
 # %%
@@ -452,11 +471,12 @@ theAx.set_xlabel('time')
 theAx.set_ylabel('fractional coverage')
 out = theAx.legend(loc='center right')
 
-# %%
-np.min(yvals)
+# %% [markdown]
 
-# %%
-np.min(yvals)
+# ## Problem Temperature
+# -1\) Override `timeloop5fixed` so that it saves these three temperatures,
+#  plus the daisy growth rates to new variables in the Integ54 instance
+
 
 
 # %%

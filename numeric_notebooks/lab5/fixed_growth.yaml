@@ -11,8 +11,8 @@ uservars:
   L: 1.1
   R: 0.12
 initvars:
-  whiteconc: 0.2
-  blackconc: 0.7
+  whiteconc: 0.4
+  blackconc: 0.2
 adaptvars:
   dtpassmin: 0.1
   dtpassmax: 5.0

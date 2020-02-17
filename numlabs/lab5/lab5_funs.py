@@ -137,6 +137,13 @@ class Integrator:
         timeVals = []
         yvals = []
         errorList = []
+
+        ### Added  By chris rodell 
+        #############################################
+        temp_w, temp_b, temp_e, Te_4 = [], [], [], []
+        #############################################
+
+        
         while(oldTime < t.tend):
             timeVals.append(oldTime)
             yvals.append(yold)

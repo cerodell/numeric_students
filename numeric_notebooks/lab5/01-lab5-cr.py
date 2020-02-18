@@ -397,9 +397,11 @@ class Integ54(Integrator):
     def __init__(self, coeff_file_name):
         super().__init__(coeff_file_name)
         self.set_yinit()
+        ######################################################
+        ####################### Temp Q.1 #####################
         self.temp_w_list, self.temp_b_list, self.temp_e_list = [], [], []
         self.beta_b_list, self.beta_w_list = [], []
-
+        ######################################################
 
 
     def find_temp(self, yvals):
@@ -442,9 +444,11 @@ class Integ54(Integrator):
             beta_w = 1.0 - 0.003265 * (295.0 - temp_w)**2.0
         else:
             beta_w = 0.0
-
+        ######################################################
+        ####################### Temp Q.1 #####################
         self.beta_b = beta_b
         self.beta_w = beta_w
+        ######################################################
 
         user = self.uservars
         bare = 1.0 - y[0] - y[1]
@@ -472,13 +476,16 @@ class Integ54(Integrator):
         for theTime in timeSteps[:-1]:
             yold, yError, newTime = self.rkckODE5(yold, theTime, t.dt)
             temp_wi, temp_bi, temp_ei = self.find_temp(yold)
+            ######################################################
+            ####################### Temp Q.1 #####################
+
             self.temp_w_list.append(temp_wi)
             self.temp_b_list.append(temp_bi)
             self.temp_e_list.append(temp_ei)
 
             self.beta_b_list.append(self.beta_b)
             self.beta_w_list.append(self.beta_w)
-
+            ######################################################
             yvals.append(yold)
             errorList.append(yError)
 
@@ -509,9 +516,154 @@ out = theAx.legend(loc='center right')
 # ## Problem Temperature
 # -1\) Override `timeloop5fixed` so that it saves these three temperatures,
 #  plus the daisy growth rates to new variables in the Integ54 instance
-
-
-
+# $$
+# \\
+# $$
+# **See code cell above ihave commented where I made this happen**
+#
+# - 2\) Make plots of (temp_w, temp_b) and (beta_w, beta_b) vs. time for
+#  a case with non-zero equilibrium concentrations of both black and white daisies
+# $$
+# \\
+# $$
+# **SEE BELOW**
 # %%
 
+
+thefig, theAx = plt.subplots(1, 1)
+line1, = theAx.plot(timevals[:-1], theSolver.temp_w_list )
+line2, = theAx.plot(timevals[:-1], theSolver.temp_b_list )
+line1.set(linestyle='--', color='r', label='white')
+line2.set(linestyle='--', color='k', label='black')
+theAx.set_title('Temp v Time')
+theAx.set_xlabel('time')
+theAx.set_ylabel('Temp K')
+out = theAx.legend(loc='center right')
+
+thefig, theAx = plt.subplots(1, 1)
+line1, = theAx.plot(timevals[:-1], theSolver.beta_w_list )
+line2, = theAx.plot(timevals[:-1], theSolver.beta_b_list )
+line1.set(linestyle='--', color='r', label='white')
+line2.set(linestyle='--', color='k', label='black')
+theAx.set_title('Growth rates V Time')
+theAx.set_xlabel('time')
+theAx.set_ylabel('Growth rates')
+out = theAx.legend(loc='center right')
+
+# %% [markdown]
+# ## Problem Estimate
+# - 1\) Play with the time step and final time, attempting small 
+# changes at first. How reasonable is the error estimate?
+# $$
+# \\
+# $$
+# **The error estimate remains smaller than the actual 
+# error until you apply really large steps or short final run times.**
+# $$
+# \\
+# $$
+# - 2\) Keep decreasing the time step. Does the error estimate diverge from the computed error? Why?
+# $$
+# \\
+# $$
+# **Yes, the error estimate diverges from the computed error at small time steps. 
+# This is because the initial conditions applied to the estimate approximation 
+# cant resolve such small time steps.**
+# $$
+# \\
+# $$
+# - 3\) Keep increasing the time step. Does the error estimate diverge? What is happening with the numerical solution?
+# $$
+# \\
+# $$
+# **You only see a divergence in error from the fixed time step. This is because using a really large time 
+# step makes for an unstable solution... when not applying an adaptive time step that is.**
 # %%
+from numlabs.lab5.lab5_funs import Integrator
+
+
+class Integ55(Integrator):
+    def set_yinit(self):
+        #
+        # read in 'c1 c2 c3'
+        #
+        uservars = namedtuple('uservars', self.config['uservars'].keys())
+        self.uservars = uservars(**self.config['uservars'])
+        #
+        # read in initial yinit
+        #
+        initvars = namedtuple('initvars', self.config['initvars'].keys())
+        self.initvars = initvars(**self.config['initvars'])
+        self.yinit = np.array([self.initvars.yinit])
+        self.nvars = len(self.yinit)
+        return None
+
+    def __init__(self, coeff_file_name):
+        super().__init__(coeff_file_name)
+        self.set_yinit()
+
+    def derivs5(self, y, theTime):
+        """
+           y[0]=fraction white daisies
+        """
+        user = self.uservars
+        f = np.empty_like(self.yinit)
+        f[0] = user.c1 * y[0] + user.c2 * theTime + user.c3
+        return f
+
+# %%
+import matplotlib.pyplot as plt
+
+theSolver = Integ55('expon.yaml')
+
+timeVals, yVals, yErrors = theSolver.timeloop5Err()
+timeVals = np.array(timeVals)
+exact = timeVals + np.exp(-timeVals)
+yVals = np.array(yVals)
+yVals = yVals.squeeze()
+yErrors = np.array(yErrors)
+
+thefig, theAx = plt.subplots(1, 1)
+line1 = theAx.plot(timeVals, yVals, label='adapt')
+line2 = theAx.plot(timeVals, exact, 'r+', label='exact')
+theAx.set_title('lab 5 interactive 5')
+theAx.set_xlabel('time')
+theAx.set_ylabel('y value')
+theAx.legend(loc='center right')
+
+#
+# we need to unpack yvals (a list of arrays of length 1
+# into an array of numbers using a list comprehension
+#
+
+thefig, theAx = plt.subplots(1, 1)
+realestError = yVals - exact
+actualErrorLine = theAx.plot(timeVals, realestError, label='actual error')
+estimatedErrorLine = theAx.plot(timeVals, yErrors, label='estimated error')
+theAx.legend(loc='best')
+
+timeVals, yVals, yErrors = theSolver.timeloop5fixed()
+
+np_yVals = np.array(yVals).squeeze()
+yErrors = np.array(yErrors)
+np_exact = timeVals + np.exp(-timeVals)
+
+thefig, theAx = plt.subplots(1, 1)
+line1 = theAx.plot(timeVals, np_yVals, label='fixed')
+line2 = theAx.plot(timeVals, np_exact, 'r+', label='exact')
+theAx.set_title('lab 5 interactive 5 -- fixed')
+theAx.set_xlabel('time')
+theAx.set_ylabel('y value')
+theAx.legend(loc='center right')
+
+thefig, theAx = plt.subplots(1, 1)
+realestError = np_yVals - np_exact
+actualErrorLine = theAx.plot(timeVals, realestError, label='actual error')
+estimatedErrorLine = theAx.plot(timeVals, yErrors, label='estimated error')
+theAx.legend(loc='best')
+theAx.set_title('lab 5 interactive 5 -- fixed errors')
+
+# %% [markdown]
+# ## Problem adaptive
+# - 1/) Run the code and find solutions of Daisyworld with the default settings found in
+#  adapt.yaml using the timeloop5Err adaptive code

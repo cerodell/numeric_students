@@ -137,13 +137,6 @@ class Integrator:
         timeVals = []
         yvals = []
         errorList = []
-
-        ### Added  By chris rodell 
-        #############################################
-        temp_w, temp_b, temp_e, Te_4 = [], [], [], []
-        #############################################
-
-        
         while(oldTime < t.tend):
             timeVals.append(oldTime)
             yvals.append(yold)
@@ -262,14 +255,14 @@ class Integrator:
         """
         t = self.timevars
         yold = self.yinit
-
-
         yError = np.zeros_like(yold)
         yvals = [yold]
+
         errorList = [yError]
         timeSteps = np.arange(t.tstart, t.tend, t.dt)
         for theTime in timeSteps[:-1]:
             yold, yError, newTime = self.rkckODE5(yold, theTime, t.dt)
+
             #pdb.set_trace()
             yvals.append(yold)
             errorList.append(yError)

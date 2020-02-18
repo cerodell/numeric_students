@@ -317,7 +317,7 @@ ax.set_xlabel('Fraction of Solar Flux Density L()')
 # the local temperature. Interestingly as the value of the fractional 
 # solar flux density exceeds the albedo value of the grey daisy you 
 # see a non-zero steady-state. So the mechanism is that the amount of
-#  energy coming in needs to exceed the amount of energy going out to
+#  energy on the grey daisy needs to exceed the amount of energy going the grey dasiy reflects inorder to
 #  have a suitable climate for the grey daisies to live.**
 # %%
 
@@ -330,7 +330,6 @@ ax.set_ylabel('Daisy Temperature K')
 
 dif = temp_e_list[1]-temp_y_list[1]
 
-# %%
 
 
 # %% [markdown]
@@ -343,5 +342,161 @@ dif = temp_e_list[1]-temp_y_list[1]
 # $$
 # \\
 # $$
+# **By adding 0.01 making the initial fraction of black daisies to be 0.04 
+# in the initial.yaml we still have a non-zero daisy population. 
+# The fractional coverage of the wihite and black 
+# daises are ~0.64, ~0.13 respectively. **
+# $$ 
+# \\
+# $$
+# - 2\) Attempt to adjust the initial white daisy population to obtain a non-zero steady
+#  state. Do you have to increase or decrease the initial fraction? What is your 
+# explanation for this behavior?
+# $$ 
+# \\
+# $$
+# **No matter the values of the fractional coverage for the white daisies
+#  population I cant not determine a non-zero steady state. This is because how we 
+#  define daisy world, there is not an imbalance in the feedback for
+#  how each of the populations responded to one other.**
+# $$ 
+# \\
+# $$
+# - 3\) Experiment with other initial fractions of daisies and 
+# look for non-zero steady states.
+# $$ 
+# \\
+# $$
+# **Again, No matter the values of the fractional coverage for either
+#  daisy population I cant not determine a non-zero. This is because 
+#  how we define the daisy world there is now an imbalance in the feedback
+#   for how each of the populations responded to each other.**
+
+# %%
+from numlabs.lab5.lab5_funs import Integrator
+
+
+class Integ54(Integrator):
+    def set_yinit(self):
+        #
+        # read in 'albedo_white chi S0 L albedo_black R albedo_ground'
+        #
+        uservars = namedtuple('uservars', self.config['uservars'].keys())
+        self.uservars = uservars(**self.config['uservars'])
+        #
+        # read in 'whiteconc blackconc'
+        #
+        initvars = namedtuple('initvars', self.config['initvars'].keys())
+        self.initvars = initvars(**self.config['initvars'])
+        self.yinit = np.array(
+            [self.initvars.whiteconc, self.initvars.blackconc])
+        self.nvars = len(self.yinit)
+        return None
+
+    def __init__(self, coeff_file_name):
+        super().__init__(coeff_file_name)
+        self.set_yinit()
+
+    def find_temp(self, yvals):
+        """
+            Calculate the temperatures over the white and black daisies
+            and the planetary equilibrium temperature given the daisy fractions
+
+            input:  yvals -- array of dimension [2] with the white [0] and black [1]
+                    daisy fractiion
+            output:  white temperature (K), black temperature (K), equilibrium temperature (K)
+        """
+        sigma = 5.67e-8  # Stefan Boltzman constant W/m^2/K^4
+        user = self.uservars
+        bare = 1.0 - yvals[0] - yvals[1]
+        albedo_p = bare * user.albedo_ground + \
+            yvals[0] * user.albedo_white + yvals[1] * user.albedo_black
+        Te_4 = user.S0 / 4.0 * user.L * (1.0 - albedo_p) / sigma
+        temp_e = Te_4**0.25
+        eta = user.R * user.L * user.S0 / (4.0 * sigma)
+        temp_b = (eta * (albedo_p - user.albedo_black) + Te_4)**0.25
+        temp_w = (eta * (albedo_p - user.albedo_white) + Te_4)**0.25
+
+
+        return (temp_w, temp_b, temp_e)
+
+    def derivs5(self, y, t):
+        """y[0]=fraction white daisies
+           y[1]=fraction black daisies
+           no feedback between daisies and
+           albedo_p (set to ground albedo)
+        """
+        temp_w, temp_b, temp_e = self.find_temp(y)
+
+        if (temp_b >= 277.5 and temp_b <= 312.5):
+            beta_b = 1.0 - 0.003265 * (295.0 - temp_b)**2.0
+        else:
+            beta_b = 0.0
+
+        if (temp_w >= 277.5 and temp_w <= 312.5):
+            beta_w = 1.0 - 0.003265 * (295.0 - temp_w)**2.0
+        else:
+            beta_w = 0.0
+        user = self.uservars
+        bare = 1.0 - y[0] - y[1]
+        # create a 1 x 2 element vector to hold the derivitive
+        f = np.empty_like(y)
+        f[0] = y[0] * (beta_w * bare - user.chi)
+        f[1] = y[1] * (beta_b * bare - user.chi)
+
+        # self.temp_e = temp_e
+        # self.temp_b = temp_b
+        # self.temp_w = temp_w
+        return f
+
+        def timeloop5fixed(self):
+            """fixed time step with
+            estimated errors
+            """
+            t = self.timevars
+            yold = self.yinit
+            yError = np.zeros_like(yold)
+            yvals = [yold]
+
+            errorList = [yError]
+            timeSteps = np.arange(t.tstart, t.tend, t.dt)
+            for theTime in timeSteps[:-1]:
+                yold, yError, newTime = self.rkckODE5(yold, theTime, t.dt)
+                temp_w, temp_b, temp_e = self.find_temp(yold)
+
+                yvals.append(yold)
+                errorList.append(yError)
+                
+            yvals = np.array(yvals).squeeze()
+            errorVals = np.array(errorList).squeeze()
+            return (timeSteps, yvals, errorVals)
+
+# %%
+import matplotlib.pyplot as plt
+import pandas as pd
+
+theSolver = Integ54('initial.yaml')
+timevals, yvals, errorlist = theSolver.timeloop5fixed()
+daisies = pd.DataFrame(yvals, columns=['white', 'black'])
+
+thefig, theAx = plt.subplots(1, 1)
+line1, = theAx.plot(timevals, daisies['white'])
+line2, = theAx.plot(timevals, daisies['black'])
+line1.set(linestyle='--', color='r', label='white')
+line2.set(linestyle='--', color='k', label='black')
+theAx.set_title('lab 5 interactive 4, initial conditions')
+theAx.set_xlabel('time')
+theAx.set_ylabel('fractional coverage')
+out = theAx.legend(loc='center right')
+
+# %% [markdown]
+
+# ## Problem Temperature
+# -1\) Override `timeloop5fixed` so that it saves these three temperatures,
+#  plus the daisy growth rates to new variables in the Integ54 instance
+
+
+
+# %%
 
 # %%

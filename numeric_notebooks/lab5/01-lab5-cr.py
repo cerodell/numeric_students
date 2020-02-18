@@ -343,9 +343,9 @@ dif = temp_e_list[1]-temp_y_list[1]
 # \\
 # $$
 # **By adding 0.01 making the initial fraction of black daisies to be 0.04 
-# in the initial.yaml we still have a non-zero daisy population. 
+# in the initial.yaml we see little to no differnace in the daisy population. 
 # The fractional coverage of the wihite and black 
-# daises are ~0.64, ~0.13 respectively. **
+# daises are ~0.64, ~0.13 respectively. As for temeprature there is a minor increase for both types of daises **
 # $$ 
 # \\
 # $$
@@ -355,10 +355,12 @@ dif = temp_e_list[1]-temp_y_list[1]
 # $$ 
 # \\
 # $$
-# **No matter the values of the fractional coverage for the white daisies
-#  population I cant not determine a non-zero steady state. This is because how we 
-#  define daisy world, there is not an imbalance in the feedback for
-#  how each of the populations responded to one other.**
+# **For there to be a non zero steady-state white daisy population you need the keep the fractional
+#  difference above 0.2 (this assumes no change to the black daisy fractional diff coverage ). 
+# For a non zero steady-state to occur means that the white daisy growth rate must be non zero.
+#  The growth rate depends on the daisy temperature which depends on the emission temperature,
+#   solar luminosities, and total albedo of Daiyworld. So basically to sustain the white daisy
+#  population you need a temperature that the find habitable.**
 # $$ 
 # \\
 # $$
@@ -367,10 +369,9 @@ dif = temp_e_list[1]-temp_y_list[1]
 # $$ 
 # \\
 # $$
-# **Again, No matter the values of the fractional coverage for either
-#  daisy population I cant not determine a non-zero. This is because 
-#  how we define the daisy world there is now an imbalance in the feedback
-#   for how each of the populations responded to each other.**
+# **In order for non zero steady-state conditions to occur on Daisy World, you need the black 
+# daisy population to be small relative to the white daisy population. Effectively meaning 
+# that the albedo needs to be high enough the keep temperatures habitable for the daisy to lives**
 
 # %%
 from numlabs.lab5.lab5_funs import Integrator

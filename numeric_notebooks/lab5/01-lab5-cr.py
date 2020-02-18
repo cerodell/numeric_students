@@ -396,6 +396,10 @@ class Integ54(Integrator):
     def __init__(self, coeff_file_name):
         super().__init__(coeff_file_name)
         self.set_yinit()
+        self.temp_w_list, self.temp_b_list, self.temp_e_list = [], [], []
+        self.beta_b_list, self.beta_w_list = [], []
+
+
 
     def find_temp(self, yvals):
         """
@@ -437,6 +441,10 @@ class Integ54(Integrator):
             beta_w = 1.0 - 0.003265 * (295.0 - temp_w)**2.0
         else:
             beta_w = 0.0
+
+        self.beta_b = beta_b
+        self.beta_w = beta_w
+
         user = self.uservars
         bare = 1.0 - y[0] - y[1]
         # create a 1 x 2 element vector to hold the derivitive
@@ -449,27 +457,33 @@ class Integ54(Integrator):
         # self.temp_w = temp_w
         return f
 
-        def timeloop5fixed(self):
-            """fixed time step with
-            estimated errors
-            """
-            t = self.timevars
-            yold = self.yinit
-            yError = np.zeros_like(yold)
-            yvals = [yold]
+    def timeloop5fixed(self):
+        """fixed time step with
+        estimated errors
+        """
+        t = self.timevars
+        yold = self.yinit
+        yError = np.zeros_like(yold)
+        yvals = [yold]
+        # self.temp_w, self.temp_b, self.temp_e = [], [], []
+        errorList = [yError]
+        timeSteps = np.arange(t.tstart, t.tend, t.dt)
+        for theTime in timeSteps[:-1]:
+            yold, yError, newTime = self.rkckODE5(yold, theTime, t.dt)
+            temp_wi, temp_bi, temp_ei = self.find_temp(yold)
+            self.temp_w_list.append(temp_wi)
+            self.temp_b_list.append(temp_bi)
+            self.temp_e_list.append(temp_ei)
 
-            errorList = [yError]
-            timeSteps = np.arange(t.tstart, t.tend, t.dt)
-            for theTime in timeSteps[:-1]:
-                yold, yError, newTime = self.rkckODE5(yold, theTime, t.dt)
-                temp_w, temp_b, temp_e = self.find_temp(yold)
+            self.beta_b_list.append(self.beta_b)
+            self.beta_w_list.append(self.beta_w)
 
-                yvals.append(yold)
-                errorList.append(yError)
-                
-            yvals = np.array(yvals).squeeze()
-            errorVals = np.array(errorList).squeeze()
-            return (timeSteps, yvals, errorVals)
+            yvals.append(yold)
+            errorList.append(yError)
+
+        yvals = np.array(yvals).squeeze()
+        errorVals = np.array(errorList).squeeze()
+        return (timeSteps, yvals, errorVals)
 
 # %%
 import matplotlib.pyplot as plt

@@ -773,8 +773,6 @@ out = theAx.legend(loc='center right')
 # %% [markdown]
 # ## Problem Predator
 # - 1\) Show your modified Daisyworld equations and your new integrator class.
-
-
-
+# **RAN OUT OF TIME WILL COME TO OFFICE HOURS AND LEARN**
 
 # %%

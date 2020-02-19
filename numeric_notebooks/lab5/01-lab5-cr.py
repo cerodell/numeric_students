@@ -666,4 +666,115 @@ theAx.set_title('lab 5 interactive 5 -- fixed errors')
 # %% [markdown]
 # ## Problem adaptive
 # - 1/) Run the code and find solutions of Daisyworld with the default settings found in
-#  adapt.yaml using the timeloop5Err adaptive code
+#  adapt.yaml using the timeloop5Err adaptive code.
+# $$
+# \\
+# $$
+# **SEE CODE/PLOT BLOCK BELOW**
+# $$
+# \\
+# $$
+# - 2\) Find the solutions again but this time with fixed stepsizes and compare 
+# the size of the timesteps and number of the timesteps.
+# $$
+# \\
+# $$
+# **SEE CODE/PLOT BLOCK BELOW**
+# $$
+# \\
+# $$
+# **Fixed uses many more time steps than the adaptive. The adaptive use less and the time steps increase the further in time the solution runs. **
+# $$
+# \\
+# $$
+# - 3\) How much faster does the fixed timeloop need to be to give the 
+# same performance as the adaptive timeloop for this case?
+# $$
+# \\
+# $$
+# **SEE PRINT STATEMENT BELOW**
+# $$
+# \\
+# $$
+# **On my compute it runs `Adaptive runs 0.008301905394410251 time faster than fixed`**
+
+
+# %%
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import time
+
+## Adaptive
+theSolver = Integ54('adapt.yaml')
+start_time_adaptive = time.time()
+timevals_adaptive, yvals_adaptive, errorlist_adaptive = theSolver.timeloop5Err()
+end_time_adaptive = time.time()
+adaptive_diff = end_time_adaptive - start_time_adaptive
+print("My program took", end_time_adaptive - start_time_adaptive, "to run")
+
+daisies_adaptive = pd.DataFrame(yvals_adaptive, columns=['white', 'black'])
+
+## Fixed
+theSolver = Integ54('adapt.yaml')
+start_time = time.time()
+timevals, yvals, errorlist = theSolver.timeloop5fixed()
+end_time = time.time()
+fixed_diff = end_time - start_time
+print("My program took", end_time - start_time, "to run")
+
+daisies = pd.DataFrame(yvals, columns=['white', 'black'])
+
+
+factor = (float(adaptive_diff)/float(fixed_diff))
+print("Adaptive runs", factor, 'time faster than fixed')
+
+thefig, theAx = plt.subplots(1, 1)
+line1, = theAx.plot(timevals_adaptive, daisies_adaptive['white'])
+line2, = theAx.plot(timevals_adaptive, daisies_adaptive['black'])
+line1.set(linestyle='--', color='r', label='white adaptive')
+line2.set(linestyle='--', color='k', label='black adaptive')
+
+line3, = theAx.plot(timevals, daisies['white'])
+line4, = theAx.plot(timevals, daisies['black'])
+line3.set(color='r', label='white fixed')
+line4.set(color='k', label='black fixed')
+
+theAx.set_title('lab 5 interactive 4, adaptive and fixed')
+theAx.set_xlabel('time')
+theAx.set_ylabel('fractional coverage')
+out = theAx.legend(loc='center right')
+
+
+
+thefig, theAx = plt.subplots(1, 1)
+line1, = theAx.plot(timevals_adaptive, 'x')
+line2, = theAx.plot(timevals, 'x')
+line1.set(color='r', label='adaptive')
+line2.set(color='k', label='fixed')
+theAx.set_title('lab 5 adaptive and fixed')
+theAx.set_xlabel('number of times')
+theAx.set_ylabel('time end')
+out = theAx.legend(loc='center right')
+
+# theSolver = Integ54('initial.yaml')
+# timevals, yvals, errorlist = theSolver.timeloop5fixed()
+# daisies = pd.DataFrame(yvals, columns=['white', 'black'])
+
+# thefig, theAx = plt.subplots(1, 1)
+# line1, = theAx.plot(timevals, daisies['white'])
+# line2, = theAx.plot(timevals, daisies['black'])
+# line1.set(linestyle='--', color='r', label='white')
+# line2.set(linestyle='--', color='k', label='black')
+# theAx.set_title('lab 5 interactive 4, initial conditions')
+# theAx.set_xlabel('time')
+# theAx.set_ylabel('fractional coverage')
+# out = theAx.legend(loc='center right')
+# %% [markdown]
+# ## Problem Predator
+# - 1\) Show your modified Daisyworld equations and your new integrator class.
+
+
+
+
+# %%

@@ -24,3 +24,13 @@
 # %% [markdown]
 # ## Problem Two
 # - a\) Find the CFL condition (in seconds) for 𝑑𝑡 for the Python example in Problem One. Test your value.
+# $$
+# d / d t>2 \sqrt{g H}
+# $$
+# $$
+# \\
+# $$
+# Using the Stagered Grid.
+# $$
+# \begin{array}{l}{\frac{u_{i}(t+d t)-u_{i}(t-d t)}{2 d t}+g \frac{h_{i+1}(t)-h_{i}(t)}{d x}=0} \\ {\frac{h_{i}(t+d t)-h_{i}(t-d t)}{2 d t}+H \frac{u_{i}(t)-u_{i-1}(t)}{d x}=0}\end{array}
+# $$

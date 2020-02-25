@@ -64,4 +64,41 @@ from numlabs.lab7 import rain_cr
 rain_cr.rain([50,9])
 plt.show()
 
+# %% [markdown]
+# ## Problem Four
+# Which grid gives the best accuracy for 𝑑=𝑅/2? 
+# Explain in what ways it is more accurate.
+# $$
+# \\
+# $$
+# **From the plot below we can see that grid 2 more accurately 
+# models the actual solution. The actual solution has a 
+# parabolic shape. Though grid 1 ane 2 are sinusoidal so
+#  you see the big difference on the boundary edges. 
+# Grid 2 has a higher wave amplitude allowing better 
+# representation of the actual solution.  grid 1 
+# (likely because grid one has cos + sin in the function 
+# damping the wave).**
+# $$
+# \\
+# $$
+# $$
+# \omega^{2}=f^{2} \cos ^{2}\left(\frac{k d}{2}\right)+\frac{4 g H \sin ^{2}\left(\frac{k d}{2}\right)}{d^{2}} \hspace{10mm} \text{Grid 1}
+# $$
+# $$
+# \\
+# $$
+# $$
+# \omega^{2}=f^{2}+\frac{4 g H \sin ^{2}\left(\frac{k d}{2}\right)}{d^{2}} \hspace{10mm} \text{Grid 2}
+# $$
+
 # %%
+from numlabs.lab7 import accuracy2d
+accuracy2d.main(0.5)
+
+
+# %% [markdown]
+# ## Problem Five
+# Modify rain.py to solve equations (No variation in y, first eqn), 
+# (No variation in y, second eqn) and (No variation in y, third eqn)
+# on the most accurate grid.

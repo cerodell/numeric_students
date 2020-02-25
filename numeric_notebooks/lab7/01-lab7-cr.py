@@ -34,3 +34,34 @@
 # $$
 # \begin{array}{l}{\frac{u_{i}(t+d t)-u_{i}(t-d t)}{2 d t}+g \frac{h_{i+1}(t)-h_{i}(t)}{d x}=0} \\ {\frac{h_{i}(t+d t)-h_{i}(t-d t)}{2 d t}+H \frac{u_{i}(t)-u_{i-1}(t)}{d x}=0}\end{array}
 # $$
+# %% [markdown]
+# **CR CFL calculation**
+# $$
+# {g = 980}    \hspace{2mm} cm * s^{-2} \hspace{10mm} {H = 1}    \hspace{2mm} cm \hspace{10mm} {dx = 1}    \hspace{2mm} cm 
+# $$
+# $$
+# d / d t>2 \sqrt{g H}
+# $$
+# $$
+# \frac{dx}{2 \sqrt{g H}} > dt
+# $$
+# $$
+# \\
+# $$
+# $$
+# 0.0159 s > dt
+# $$
+# **If dt is greater than 0.0159 the model becomes unstable and explodes. SEE PLOT BELOW AS EXAMPLE**
+
+
+# %%
+import context
+import matplotlib.pyplot as plt
+import numpy as np
+from numlabs.lab7 import rain_cr
+
+
+rain_cr.rain([50,9])
+plt.show()
+
+# %%

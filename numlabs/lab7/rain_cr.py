@@ -195,7 +195,7 @@ def rain(args):
     # Constants and parameters of the model
     g = 980                     # acceleration due to gravity [cm/s^2]
     H = 1                       # water depth [cm]
-    dt = 0.001                  # time step [s]
+    dt = 0.018                  # time step [s]
     dx = 1                      # grid spacing [cm]
     ho = 0.01                   # initial perturbation of surface [cm]
     gu = g * dt / dx            # first handy constant

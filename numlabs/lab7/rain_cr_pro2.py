@@ -49,6 +49,7 @@ class Quantity(object):
         n_grid points, and a store array of n_time time steps.
         """
         self.n_grid = n_grid
+
         # Storage for values at previous, current, and next time step
         self.prev = np.empty(n_grid)
         self.now = np.empty(n_grid)
@@ -117,11 +118,14 @@ def first_time_step(u, h, g, H, dt, dx, ho, gu, gh, n_grid):
     u.now[1:n_grid - 1] = 0
     factor = gu * ho / 2
     midpoint = n_grid // 2
+    ################################################################
+    ##################### CHRIS RODELL CHANGES #####################
+    print('midpoit',midpoint)
     u.now[midpoint - 1] = -factor
-    u.now[midpoint + 1] = factor
+    u.now[midpoint] = factor
     h.now[1:n_grid - 1] = 0
-    h.now[midpoint] = ho - g * H * ho * dt ** 2 / (4 * dx ** 2)
-
+    h.now[midpoint] = ho - (g * H * ho * (dt ** 2) / (dx ** 2))
+    ################################################################
 
 def leap_frog(u, h, gu, gh, n_grid):
     """Calculate the next time step values using the leap-frog scheme
@@ -130,10 +134,11 @@ def leap_frog(u, h, gu, gh, n_grid):
     for pt in np.arange(1, n_grid - 1):
         # u.next[pt] = u.prev[pt] - gu * (h.now[pt + 1] - h.now[pt - 1])
         # h.next[pt] = h.prev[pt] - gh * (u.now[pt + 1] - u.now[pt - 1])
-
+        ################################################################
+        ##################### CHRIS RODELL CHANGES #####################
         u.next[pt] = u.prev[pt] - 2 * gu * (h.now[pt + 1] - h.now[pt])
         h.next[pt] = h.prev[pt] - 2 * gh * (u.now[pt] - u.now[pt - 1])
-
+        ################################################################
 
 #     Alternate vectorized implementation:
 #     u.next[1:n_grid - 1] = (u.prev[1:n_grid - 1]
@@ -195,7 +200,7 @@ def rain(args):
     # Constants and parameters of the model
     g = 980                     # acceleration due to gravity [cm/s^2]
     H = 1                       # water depth [cm]
-    dt = 0.018                  # time step [s]
+    dt = 0.001                  # time step [s]
     dx = 1                      # grid spacing [cm]
     ho = 0.01                   # initial perturbation of surface [cm]
     gu = g * dt / dx            # first handy constant

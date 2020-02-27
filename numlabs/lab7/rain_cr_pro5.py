@@ -93,43 +93,51 @@ class Quantity(object):
         self.now = copy.copy(self.next)
 
 
-def initial_conditions(u, h, ho):
+def initial_conditions(u, v, h, ho):
     """Set the initial condition values.
     """
     u.prev[:] = 0
+    v.prev[:] = 0
     h.prev[:] = 0
     h.prev[len(h.prev) // 2] = ho
 
 
-def boundary_conditions(u_array, h_array, n_grid):
+def boundary_conditions(u_array, v_array, h_array, n_grid):
     """Set the boundary condition values.
     """
     u_array[0] = 0
     u_array[n_grid - 1] = 0
+    v_array[0] = 0
+    v_array[n_grid - 1] = 0
     h_array[0] = h_array[1]
     h_array[n_grid-1] = h_array[n_grid-2]
 
 
-def first_time_step(u, h, g, H, dt, dx, ho, gu, gh, n_grid):
+def first_time_step(u, v, h, g, H, dt, dx, ho, gu, gh, n_grid):
     """Calculate the first time step values from the analytical
     predictor-corrector derived from equations 4.18 and 4.19.
     """
     u.now[1:n_grid - 1] = 0
+    v.now[1:n_grid - 1] = 0
     factor = gu * ho / 2
     midpoint = n_grid // 2
     u.now[midpoint - 1] = -factor
     u.now[midpoint + 1] = factor
+    v.now[midpoint - 1] = -factor
+    v.now[midpoint + 1] = factor
     h.now[1:n_grid - 1] = 0
     h.now[midpoint] = ho - g * H * ho * dt ** 2 / (4 * dx ** 2)
 
 
-def leap_frog(u, h, gu, gh, n_grid):
+def leap_frog(u, v, h, gu, gh, n_grid):
     """Calculate the next time step values using the leap-frog scheme
     derived from equations 4.16 and 4.17.
     """
     for pt in np.arange(1, n_grid - 1):
         u.next[pt] = u.prev[pt] - gu * (h.now[pt + 1] - h.now[pt - 1])
         h.next[pt] = h.prev[pt] - gh * (u.now[pt + 1] - u.now[pt - 1])
+
+        
 #     Alternate vectorized implementation:
 #     u.next[1:n_grid - 1] = (u.prev[1:n_grid - 1]
 #                             - gu * (h.now[2:n_grid] - h.now[:n_grid - 2]))
@@ -195,6 +203,10 @@ def rain(args):
     ho = 0.01                   # initial perturbation of surface [cm]
     gu = g * dt / dx            # first handy constant
     gh = H * dt / dx            # second handy constant
+    omega = 7.2921e-5           # rotation rate of the Earth [rad/s]
+    lat   = 50 
+    f = 2* omega * np.sin(lat*np.pi/180)
+
     # Create velocity and surface height objects
     u = Quantity(n_grid, n_time)
     h = Quantity(n_grid, n_time)

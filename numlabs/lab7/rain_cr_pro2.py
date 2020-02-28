@@ -161,7 +161,11 @@ def make_graph(u, h, dt, n_time):
     fig, (ax_u, ax_h) = plt.subplots(2,1, figsize=(10,10))
 
     # Set the figure title, and the axes labels.
-    the_title = fig.text(0.25, 0.95, 'Results from t = %.3fs to %.3fs' % (0, dt*n_time))
+    if dt > 0.0159:
+        the_title = fig.text(0.25, 0.95, 'UNSTABLE: Results from t = %.3fs to %.3fs' % (0, dt*n_time))
+    else:
+        the_title = fig.text(0.25, 0.95, 'STABLE: Results from t = %.3fs to %.3fs' % (0, dt*n_time))
+
     ax_u.set_ylabel('u [cm/s]')
     ax_h.set_ylabel('h [cm]')
     ax_h.set_xlabel('Grid Point')
@@ -201,7 +205,7 @@ def rain(args):
     # Constants and parameters of the model
     g = 980                     # acceleration due to gravity [cm/s^2]
     H = 1                       # water depth [cm]
-    dt = 0.001                  # time step [s]
+    dt = args[2]                  # time step [s]
     dx = 1                      # grid spacing [cm]
     ho = 0.01                   # initial perturbation of surface [cm]
     gu = g * dt / dx            # first handy constant
@@ -256,7 +260,7 @@ if __name__ == '__main__':
     #
     if len(sys.argv) == 1 or 'sphinx-build' in sys.argv[0]:
         # Default to 50 time steps, and 9 grid points
-        rain((50, 9))
+        rain((50, 9, 0.001))
         plt.show()
     elif len(sys.argv) == 3:
         # Run with the number of time steps and grid point the user gave

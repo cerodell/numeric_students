@@ -51,7 +51,7 @@
 # $$
 # 0.0159 s > dt
 # $$
-# **If dt is greater than 0.0159 the model becomes unstable and explodes. SEE PLOT BELOW AS EXAMPLE dt = 0.018s**
+# **If dt is greater than 0.0159 the model becomes unstable and explodes. SEE PLOTS BELOW AS EXAMPLE dt = 0.018s**
 
 
 # %%
@@ -60,8 +60,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numlabs.lab7 import rain_cr_pro2
 
+## Stable Case dt
+rain_cr_pro2.rain([50,9, 0.001])
 
-rain_cr_pro2.rain([50,9])
+## Unstable Case dt
+rain_cr_pro2.rain([50,9, 0.018])
+
 plt.show()
 
 # %% [markdown]
@@ -119,7 +123,7 @@ accuracy2d.main(0.5)
 # $$
 # **Discritize using leapfrog method with a Stagared Gird 2**
 # $$
-# \frac{u_{i, j+1}-u_{i, j-1}}{2 d t}-f v_{i j}+g \ \frac{h_{i+1, j}-h_{i, j}}{d x} = 0 \hspace{18mm} (1)
+# \frac{u_{i, j+1}-u_{i, j-1}}{2 d t}-f v_{i, j}+g \ \frac{h_{i+1, j}-h_{i, j}}{d x} = 0 \hspace{18mm} (1)
 # $$
 # $$
 # \frac{v_{i, j+1}-v_{i, j-1}}{2 dt}+f u_{i, j}=0 \hspace{46mm} (2)
@@ -143,6 +147,28 @@ accuracy2d.main(0.5)
 # $$
 # h_{i, j+1}=h_{i, j-1}-2 H d t \frac{u_{i, j}-u_{i-1, j}}{d x} \hspace{34mm} (3)
 # $$
+# $$
+# \\
+# $$
+# ** predictor-corrector**
+# $$
+# \begin{array}{c}h_{3}(0)=h_{0} \\ h_{3}(d t)=h_{3}(0)-h_{0} H g \frac{d t^{2}}{d x^{2}}\end{array}
+# $$
+# $$
+# \\
+# $$
+# $$
+# \begin{array}{l}u_{2}(d t)=fv_{2} -h_{0} g \frac{d t}{d x} \\ u_{3}(d t)=-u_{2}(d t)\end{array}
+# $$
+# $$
+# \\
+# $$
+# $$
+# \begin{aligned}
+# &v_{2}(d t)=f u_{2} d t\\
+# &v_{3}(d t)=-v_{2}d t
+# \end{aligned}
+# $$
 # **SEE rian_cr_pro5.py**
 # $$
 # \\
@@ -151,7 +177,9 @@ accuracy2d.main(0.5)
 # $$
 # f=2 \Omega \sin \varphi
 # $$
-# Ω = 7.2921 × 10−5 rad/s
+# $$
+# \Omega = 7.2921 × 10−5 \hspace{2mm} (rad/s)
+# $$
 # %%
 from numlabs.lab7 import rain_cr_pro5
 

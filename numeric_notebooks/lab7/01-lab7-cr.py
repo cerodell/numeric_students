@@ -51,7 +51,7 @@
 # $$
 # 0.0159 s > dt
 # $$
-# **If dt is greater than 0.0159 the model becomes unstable and explodes. SEE PLOT BELOW AS EXAMPLE**
+# **If dt is greater than 0.0159 the model becomes unstable and explodes. SEE PLOT BELOW AS EXAMPLE dt = 0.018s**
 
 
 # %%

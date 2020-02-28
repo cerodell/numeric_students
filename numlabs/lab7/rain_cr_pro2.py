@@ -116,7 +116,7 @@ def first_time_step(u, h, g, H, dt, dx, ho, gu, gh, n_grid):
     predictor-corrector derived from equations 4.18 and 4.19.
     """
     u.now[1:n_grid - 1] = 0
-    factor = gu * ho / 2
+    factor = gu * ho
     midpoint = n_grid // 2
     ################################################################
     ##################### CHRIS RODELL CHANGES #####################

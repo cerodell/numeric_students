@@ -113,40 +113,38 @@ def boundary_conditions(u_array, v_array, h_array, n_grid):
     h_array[n_grid-1] = h_array[n_grid-2]
 
 
-def first_time_step(u, v, h, g, H, dt, dx, ho, gu, gh, n_grid):
+def first_time_step(u, v, h, g, H, dt, dx, ho, gu, gh, n_grid, f): 
     """Calculate the first time step values from the analytical
     predictor-corrector derived from equations 4.18 and 4.19.
     """
     u.now[1:n_grid - 1] = 0
     v.now[1:n_grid - 1] = 0
-    factor = gu * ho / 2
+    # ufactor = (f * v.now) - gu * ho
+    # vfactor = -f * u.now * dt
+
     midpoint = n_grid // 2
 
-    u.now[midpoint - 1] = -factor
-    u.now[midpoint] = factor
+    ufactor = (f * v.now[midpoint]) - gu * ho
+    vfactor = -f * u.now[midpoint] * dt
+
+    u.now[midpoint - 1] = ufactor
+    u.now[midpoint] = - ufactor
     
-    v.now[midpoint - 1] = -factor
-    v.now[midpoint] = factor
+    v.now[midpoint - 1] = vfactor
+    v.now[midpoint] = -vfactor
 
     h.now[1:n_grid - 1] = 0
     h.now[midpoint] = ho - g * H * ho * dt ** 2 / (4 * dx ** 2)
 
 
-def leap_frog(u, v, h, gu, gh, n_grid):
+def leap_frog(u, v, h, dt, dx, H, g, f, n_grid):
     """Calculate the next time step values using the leap-frog scheme
     derived from equations 4.16 and 4.17.
     """
     for pt in np.arange(1, n_grid - 1):
-        u.next[pt] = u.prev[pt] - gu * (h.now[pt + 1] - h.now[pt - 1])
-        h.next[pt] = h.prev[pt] - gh * (u.now[pt + 1] - u.now[pt - 1])
-
-        
-#     Alternate vectorized implementation:
-#     u.next[1:n_grid - 1] = (u.prev[1:n_grid - 1]
-#                             - gu * (h.now[2:n_grid] - h.now[:n_grid - 2]))
-#     h.next[1:n_grid - 1] = (h.prev[1:n_grid - 1]
-#                             - gh * (u.now[2:n_grid] - u.now[:n_grid - 2]))
-
+        u.next[pt] = u.prev[pt] + (((2 * dt) / dx) * (dx * f * v.now[pt] - g* (h.now[pt + 1] - h.now[pt])))
+        v.next[pt] = v.prev[pt] - (2 * f * u.now[pt] * dt)
+        h.next[pt] = h.prev[pt] - 2 * ((H * dt) / dx) * (u.now[pt] - u.now[pt - 1])
 
 def make_graph(u, v, h, dt, n_time):
     """Create graphs of the model results using matplotlib.
@@ -215,23 +213,24 @@ def rain(args):
 
     # Create velocity and surface height objects
     u = Quantity(n_grid, n_time)
+    v = Quantity(n_grid, n_time)
     h = Quantity(n_grid, n_time)
     # Set up initial conditions and store them in the time step
     # results arrays
-    initial_conditions(u, v h, ho)
+    initial_conditions(u, v, h, ho)
     u.store_timestep(0, 'prev')
     h.store_timestep(0, 'prev')
     # Calculate the first time step values from the
     # predictor-corrector, apply the boundary conditions, and store
     # the values in the time step results arrays
-    first_time_step(u, v, h, g, H, dt, dx, ho, gu, gh, n_grid)
+    first_time_step(u, v, h, g, H, dt, dx, ho, gu, gh, n_grid, f)
     boundary_conditions(u.now, v.now, h.now, n_grid)
     u.store_timestep(1, 'now')
     h.store_timestep(1, 'now')
     # Time step loop using leap-frog scheme
     for t in np.arange(2, n_time):
         # Advance the solution and apply the boundary conditions
-        leap_frog(u, v, h, gu, gh, n_grid)
+        leap_frog(u, v, h, dt, dx, H, g, f, n_grid)
         boundary_conditions(u.next, v.next, h.next, n_grid)
         # Store the values in the time step results arrays, and shift
         # .now to .prev, and .next to .now in preparation for the next

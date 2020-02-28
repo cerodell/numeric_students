@@ -143,10 +143,18 @@ accuracy2d.main(0.5)
 # $$
 # h_{i, j+1}=h_{i, j-1}-2 H d t \frac{u_{i, j}-u_{i-1, j}}{d x} \hspace{34mm} (3)
 # $$
-# **SEE rian_cr.py**
-# Note the Coriolis frequency was defined by the equatin below at an latitude of 50 deg north
+# **SEE rian_cr_pro5.py**
+# $$
+# \\
+# $$
+# *Note the Coriolis frequency was defined by the equatin below at an latitude of 50 deg north*
 # $$
 # f=2 \Omega \sin \varphi
 # $$
 # Ω = 7.2921 × 10−5 rad/s
 # %%
+from numlabs.lab7 import rain_cr_pro5
+
+
+rain_cr_pro5.rain([50,9])
+plt.show()

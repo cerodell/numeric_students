@@ -122,6 +122,7 @@ def first_time_step(u, h, g, H, dt, dx, ho, gu, gh, n_grid):
     ##################### CHRIS RODELL CHANGES #####################
     print('midpoit',midpoint)
     u.now[midpoint - 1] = -factor
+    print(u.now, 'now of u')
     u.now[midpoint] = factor
     h.now[1:n_grid - 1] = 0
     h.now[midpoint] = ho - (g * H * ho * (dt ** 2) / (dx ** 2))

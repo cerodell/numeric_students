@@ -6,8 +6,9 @@ uservars:
   albedo_grey: 0.6
   chi: 0.3
   S0: 3668.0
-  L: 0.2
+  L: 0.6
   R: 0.12
+
   albedo_ground: 0.3
 initvars:
   greyconc: 0.5

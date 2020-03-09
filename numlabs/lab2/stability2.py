@@ -8,7 +8,7 @@ from numlabs.lab2.lab2_functions import euler,beuler,leapfrog
 import numpy as np
 
 
-theFuncs={'euler':euler,'beuler':beuler,'leapfrog':leapfrog}
+theFuncs={'euler':euler,'beuler':beuler,'leapfrog':leapfrog, 'midpoint':midpoint}
 
 if __name__=="__main__":
     tend=10.
@@ -16,7 +16,14 @@ if __name__=="__main__":
     To=30.
     theLambda=-8.
     funChoice='euler'
+<<<<<<< HEAD
+    funChoice='leapfrog'
+    funChoice='beuler'
+    funChoice='midpoint'
+    npts=40.
+=======
     npts=40
+>>>>>>> 1897d2b19947f0949747685110ba5ad170098e15
     approxTime,approxTemp=theFuncs[funChoice](npts,tend,To,Ta,theLambda)
     exactTime=np.empty([npts,],float)
     exactTemp=np.empty_like(exactTime)

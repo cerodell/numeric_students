@@ -116,16 +116,18 @@ def find_depth3(H0, ngrid):
     of a sine wave with 2 periods across the x domain
     '''
     from mpl_toolkits.mplot3d import axes3d
-
     print ('Sin wave Heights 1600 to 400')
-    xs = np.linspace(0, 2*np.pi, ngrid)
-    ys = np.linspace(0, 2*np.pi, ngrid)
+    L = 1000e3
+
+    xs = np.linspace(0, np.pi, ngrid)  ##one period sin wave
+    ys = np.linspace(0, np.pi, ngrid)  ##one period sin wave
+    # xs = np.linspace(0, L, ngrid)   ## Gental SLope
+    # ys = np.linspace(0, L, ngrid)   ## Gental SLope
 
     xx, yy = np.meshgrid(xs, ys) 
     Hv = 600*np.sin(xx+xx) + H0
     Hu = 600*np.sin(xx+xx) + H0
 
-    L = 1000e3
     xL = np.linspace(0, L, ngrid)
     yL = np.linspace(0, L, ngrid)
     Lx, Ly = np.meshgrid(xL, yL) 

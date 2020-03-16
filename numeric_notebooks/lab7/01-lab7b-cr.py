@@ -101,12 +101,19 @@
 # $$
 # \\
 # $$
-# I have blocked out the portion of code I altered in interactive1_cr.py. 
+# I have blocked out (with ###) the portion of code I altered in interactive1_cr.py. 
 # The two functions altred w the find_depth3 and interactive1
 # $$
 # \\
 # $$
 # - c) Explain the differences that the bottom topography makes.
+# The new topography has altered all u, v, eta, and velocity. For u component,
+#  you can see slower velocities where the sin wave is increasing vertically 
+#  "upslope" and on the downslope of the sin wave, you can see u velocities 
+#  increasing. v is nearly u but transposed 90 deg (or pi/2) in a counterclockwise 
+#  direction. Eta is fun as the high point has shifted off-center and is now at 
+#  the crest of the sin wave. Anf the velocity field is off-center towards the
+#   crest of the sin wave, with a bit stronger magnitudes  
 
 # %%
 import context

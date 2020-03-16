@@ -3,33 +3,34 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import axes3d
 
-# # # Make the X, Y meshgrid instead of np.tile
-# ngrid = 11
-# H0 = 1000
+# # Make the X, Y meshgrid instead of np.tile
+ngrid = 11
+H0 = 1000
+L = 1000e3
 
-# # xs = np.linspace(0, 2*np.pi, ngrid)
-# # ys = np.linspace(0, 2*np.pi, ngrid)
 
-# xs = np.linspace(0, L, ngrid)
-# ys = np.linspace(0, L, ngrid)
+# xs = np.linspace(0, 2*np.pi, ngrid)
+# ys = np.linspace(0, 2*np.pi, ngrid)
 
-# Hu, Hv = np.meshgrid(xs, ys) 
-# amp =400*np.sin((Hu+Hu)) + H0
-# # %matplotlib 
-# L = 1000e3
+xs = np.linspace(0, L, ngrid)
+ys = np.linspace(0, L, ngrid)
 
-# xs = np.linspace(0, L, ngrid)
-# ys = np.linspace(0, L, ngrid)
+Hu, Hv = np.meshgrid(xs, ys) 
+amp =400*np.sin((Hu+Hu)) + H0
+# %matplotlib 
 
-# xx, yy = np.meshgrid(xs, ys) 
+xs = np.linspace(0, L, ngrid)
+ys = np.linspace(0, L, ngrid)
 
-# fig = plt.figure()
-# ax3d = fig.add_subplot(111, projection='3d')
-# surf = ax3d.plot_surface(xx, yy, amp)
+xx, yy = np.meshgrid(xs, ys) 
 
-zz = np.arange(0,97,1)
-for i in zz[0::6]:
-    print(zz[i])
+fig = plt.figure()
+ax3d = fig.add_subplot(111, projection='3d')
+surf = ax3d.plot_surface(xx, yy, amp)
+
+# zz = np.arange(0,97,1)
+# for i in zz[0::6]:
+#     print(zz[i])
 # Make the X, Y meshgrid instead of np.tile
 # ngrid = 11
 # H0 = 1000

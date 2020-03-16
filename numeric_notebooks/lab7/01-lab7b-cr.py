@@ -70,11 +70,42 @@
 # in two-dimensions with periodic boundary conditions on a flat bottom.
 # The depth is set in the functions find depth*. Use grid-C and edit the
 # find depth3 function.**
+# $$
+# \\
+# $$
 # - a) Choose an interesting but smooth topography (remembering that
 # the domain is periodic in both space dimensions). Implement it
 # in find depth3 correctly given the grid-C staggering.
+# $$
+# \\
+# $$
+# *(SEE interactive1_cr.py)*
+# $$
+# \\
+# $$
 # - b) Run your new code. Discuss any other changes you make to the
 # code. You may want to change what and when it plots.
+# $$
+# \\
+# $$
+# I have made a new terrain that is a sin function with 2 full 
+# periods across the x-axis of the domain. The sin function is 
+# centered at H0 (1000 meters) with an amplitude of 600 meters.
+#  See 3D plot for graphical depiction.
+# $$
+# \\
+# $$
+# I have also altered the plotting function to show how u, v, eta, 
+# and velocity changes through time. I would have liked to have animated 
+# this but I wasn't able to get that functioning. 
+# $$
+# \\
+# $$
+# I have blocked out the portion of code I altered in interactive1_cr.py. 
+# The two functions altred w the find_depth3 and interactive1
+# $$
+# \\
+# $$
 # - c) Explain the differences that the bottom topography makes.
 
 # %%
@@ -85,9 +116,9 @@ import matplotlib.pyplot as plt
 # %matplotlib 
 import numpy as np
 
-# import the 2-dimensional drop solver
-from numlabs.lab7 import interactive1_cr
-from numlabs.lab7 import interactive1
+# import the 2-dimensional drop solvers
+from numlabs.lab7 import interactive1_cr  ## My Modifiied verison
+from numlabs.lab7 import interactive1     ## The original version 
 
 plt.close('all')
 # grid A is grid 1, grid B is grid 2 and and grid C is grid 3
@@ -95,13 +126,11 @@ plt.close('all')
 # dt is the time step in seconds
 # T is the time plotted is seconds to 4*3600 is 4 hours
 
+## Make Plots with my version
 interactive1_cr.interactive1(grid=3, ngrid=11, dt=150, T=4*3600)
 
+## Make plot original version
 interactive1.interactive1(grid=3, ngrid=11, dt=150, T=4*3600)
-
-
-# interactive1_cr.interactive1(grid=4, ngrid=11, dt=150, T=4*3600)
-
 
 plt.show('all')
 

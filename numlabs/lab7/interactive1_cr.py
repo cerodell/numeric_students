@@ -59,7 +59,7 @@ def interactive1(grid, ngrid, dt, T, small=False):  # return eta
         u, v, eta = stepper[grid](ngrid, f, g, Hu, Hv, dt, rdx, u, v, eta, up, vp, etap)
         # add forcing
         t = k * dt / 8640
-        print('forcing', t)
+        # print('forcing', t)
 
         eta = eta + 0.1 * (1 - np.exp(-t*t)) * spatial
         # periodic boundary conditions
@@ -117,7 +117,7 @@ def find_depth3(H0, ngrid):
     '''
     from mpl_toolkits.mplot3d import axes3d
 
-    print ('sin wave Heights 1300 to 700')
+    print ('Sin wave Heights 1600 to 400')
     xs = np.linspace(0, 2*np.pi, ngrid)
     ys = np.linspace(0, 2*np.pi, ngrid)
 
@@ -136,7 +136,8 @@ def find_depth3(H0, ngrid):
     ax3d.set_zlabel('$z$')   
     surf = ax3d.plot_surface(Lx, Ly, Hu)
 
-    print(Hu)
+    # print(Hu)
+
 
     return Hu, Hv
 ####################################################################

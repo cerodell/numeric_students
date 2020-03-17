@@ -82,6 +82,7 @@
 #
 
 # %%
+import context
 from IPython.display import Image
 # import the quiz script
 from numlabs.lab8 import quiz8 as quiz

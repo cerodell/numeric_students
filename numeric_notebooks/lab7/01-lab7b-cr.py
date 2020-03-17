@@ -8,6 +8,9 @@
 # ### Problem Seven
 # -b) For grid C, write down the finite difference form of the shallow water equations.
 # Shallow Water Equations
+# $$
+# u(x_{i},y_{j},t_{n}), v(x_{i},y_{j},t_{n}),h(x_{i},y_{j},t_{n})
+# $$
 # ##### Full Equations, Eqn 1
 # $$
 # \frac{\partial u}{\partial t}-f v=-g \frac{\partial h}{\partial x}

@@ -202,45 +202,61 @@ def chi(psi, vis_curr, vis_prev, nx, ny, dx, epsilon, wind_par, vis_par):
     
     return rhs
 
+
+####################################################################################
+############################ Edited by Chris Rodell ################################
+####################################################################################
 def relax_jacobi(rhs, chi_prev, nx, ny, tol, max_count):
+    # print(rhs.shape,'rhs shape')
+    # print(chi_prev.shape,'chi_prev shape')
+    # print(chi_prev,'chi_prev')
 
-    ITERATION_LIMIT = 1000
+
+    ITERATION_LIMIT = 2
     count = 0
-    chi = np.copy(chi_prev)
-    r = np.zeros_like(chi_prev)
+    # chi =  np.ones_like(chi_prev)
+    chi = np.random.uniform(low= -0.5, high=1.3, size=(nx,ny))
+    # chi = chi_prev
+    # r = np.zeros_like(chi_prev)
     
-    rr = 1e50
+    # rr = 1e50
 
-    si = 1; ei = nx-1 # start and end i indices
-    sj = 1; ej = ny-1 # start and end j indices
+    # si = 1; ei = nx-1 # start and end i indices
+    # sj = 1; ej = ny-1 # start and end j indices
 
-    while (rr > tol) & (count < max_count): 
+    # while (x != np.NAN): 
 
-        print("System:")
+    print("System:")
+    for i in range(chi.shape[0]):
+        row = ["{}*x{}".format(chi[i, j], j + 1) for j in range(chi.shape[1])]
+        # print(" + ".join(row), "=", rhs[i])
+    # print()
+
+    x = np.zeros_like(rhs)
+    for it_count in range(ITERATION_LIMIT):
+        print("Current solution:", x)
+        x_new = np.zeros_like(x)
+
         for i in range(chi.shape[0]):
-            row = ["{}*x{}".format(chi[i, j], j + 1) for j in range(chi.shape[1])]
-            print(" + ".join(row), "=", rhs[i])
-        print()
+            s1 = np.dot(chi[i, :i], x[:i])
+            s2 = np.dot(chi[i, i + 1:], x[i + 1:])
+            x_new[i] = (rhs[i] - s1 - s2) / chi[i, i]
 
-        x = np.zeros_like(rhs)
-        for it_count in range(ITERATION_LIMIT):
-            print("Current solution:", x)
-            x_new = np.zeros_like(x)
+        if np.allclose(x, x_new, atol=1e-10, rtol=0.):
+            break
 
-            for i in range(chi.shape[0]):
-                s1 = np.dot(chi[i, :i], x[:i])
-                s2 = np.dot(chi[i, i + 1:], x[i + 1:])
-                x_new[i] = (rhs[i] - s1 - s2) / chi[i, i]
-
-            if np.allclose(x, x_new, atol=1e-10, rtol=0.):
-                break
-            count = count + 1
-
-            x = x_new
+        x = x_new
+    
+    count = count + 1
 
     return (x, count)
 
+####################################################################################
+####################################################################################
+
 def relax(rhs, chi_prev, dx, nx, ny, r_coeff, tol, max_count, loop):
+    # print(rhs, 'rhs')
+
     chi = np.copy(chi_prev)
     r = np.zeros_like(chi_prev)
 
@@ -283,10 +299,75 @@ def relax(rhs, chi_prev, dx, nx, ny, r_coeff, tol, max_count, loop):
         else:
             rr=r_max / chi_max
         count = count + 1
-        
+    # print(chi.shape, 'chi')
+    # print(rhs.shape, 'rhs')
+    # print(rhs, 'rhs')
+
     return (chi, count)
 
+
+####################################################################################
+############################ Edited by Chris Rodell ################################
+####################################################################################
 def qg(totaltime, loop=False):
+    
+    # initialize the physical parameters
+    (pb, pa, pepsilon, pwind, pvis, ptime) = param()
+    # initialize the numerical parameters
+    (nnx, ndx, nny, ndt, ntol, nmax, ncoeff) = numer_init()
+
+    # initialize the arrays (need 2 because chi depends on psi at 2 time steps)
+    psi_1 = np.zeros((nnx,nny))
+    psi_2 = np.zeros((nnx,nny))
+
+    vis_prev = np.zeros((nnx,nny))
+    vis_curr = np.zeros((nnx,nny))
+
+    chii = np.zeros((nnx,nny))
+    chi_prev = np.zeros((nnx,nny))
+
+    # non-dimensionalize time
+    totaltime = totaltime/ptime
+    dt = ndt/ptime
+
+    # start time loop
+    t = 0
+    count = 0
+    count_total = 0
+
+    # loop
+    while (t < totaltime):
+        # write some stuff on the screen so you know code is working
+        t = t + dt
+        
+        # update viscosity
+        vis_prev = vis_curr
+        vis_curr = vis(psi_1, nnx, nny)
+        
+        # find chi, take a step
+        rhs = chi(psi_1, vis_curr, vis_prev, nnx, nny, ndx, pepsilon, pwind, pvis)
+        (chii, c) = relax(rhs, chi_prev, ndx, nnx, nny, ncoeff, ntol, nmax, loop)
+        # (chii, c) = relax_jacobi(rhs, chi_prev, nnx, nny, ntol, nmax)
+        psi_2 = psi_2 + dt*chii
+        chi_prev = chii
+        count_total = count_total + c
+        
+        # do exactly the same thing again with opposite psi arrays
+        t = t + dt
+        
+        vis_prev = vis_curr
+        vis_curr = vis(psi_2, nnx, nny)
+        rhs = chi(psi_2, vis_curr, vis_prev, nnx, nny, ndx, pepsilon, pwind, pvis)
+        (chii, c) = relax(rhs, chi_prev, ndx, nnx, nny, ncoeff, ntol, nmax, loop)
+        # (chii, c) = relax_jacobi(rhs, chi_prev,  nnx, nny, ntol, nmax)
+        psi_1 = psi_1 + dt*chii
+        chi_prev = chii
+        count_total = count_total + c
+        count = count + 1
+        
+    return psi_1
+
+def qg_cr(totaltime, loop=False):
     
     # initialize the physical parameters
     (pb, pa, pepsilon, pwind, pvis, ptime) = param()
@@ -343,7 +424,8 @@ def qg(totaltime, loop=False):
         count = count + 1
         
     return psi_1
-
+####################################################################################
+####################################################################################
 
 def main(args):
     if len(args) > 3:

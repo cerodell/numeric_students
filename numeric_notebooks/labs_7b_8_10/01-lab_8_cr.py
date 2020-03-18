@@ -45,7 +45,7 @@ import numpy as np
 import time
 
 
-import numlabs.lab8.qg as qg
+import qg as qg
 # psi = qg(10*86400)
 # param = param()
 
@@ -95,7 +95,7 @@ print(end - start, "Time elapsed for loop set to False")
 # 100 meters. This made epsilon larger and overall made 
 # the stream function converge to a smaller number. 
 # %%
-import numlabs.lab8.qg_cr as qg_cr
+import qg_cr as qg_cr
 
 start = time.time()
 qg_cr.main(t, False, 'param_cr')

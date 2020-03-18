@@ -88,9 +88,9 @@ print(end - start, "Time elapsed for loop set to False")
 #  work properly and. the code ran fast when loop on false).
 #   Also, I chose SOR because SOR improves convergence
 # considerably as compared to the Jacobi method.  
-# # $$
-# # \\
-# # $$
+# $$
+# \\
+# $$
 # The parameter I changed was depth from 500 meters to 
 # 100 meters. This made epsilon larger and overall made 
 # the stream function converge to a smaller number. 
@@ -114,6 +114,20 @@ print(end - start, "Time elapsed for loop set to False")
 #       (Wikipedia entry on Rossby waves is currently okay if you want a quick }
 #        \\ \text { read about them. The time scale given for Rossby waves across the }
 #         \\ \text { ocean is for baroclinic (slow) waves. You are doing barotropic (fast) } \\ \text { waves). }\end{array}
+# $$
+# \\
+# $$
+# *(SEE CODE BLOCK BELOW AND PLOTS NOTE THAT CHANGE
+#  TO PSI_1 AND PSI_2 AND WIND STRESS WHERE DONE IN qg_cr2.py)*
+# %%
+import qg_cr2 as qg_cr2
+import time
+t = 10*86400
+start = time.time()
+qg_cr2.main(t, False, 'param_cr')
+end = time.time()
+print(end - start, "Time elapsed for loop set to False")
+
 
 
 # %%

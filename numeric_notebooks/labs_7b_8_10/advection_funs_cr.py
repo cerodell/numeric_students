@@ -1,5 +1,7 @@
 '''
 Module containing advection3 and, in time advection and advection2
+
+THIS USES MY MODIFIED TABLES!!!!!!!!!
 '''
 import context
 import sys
@@ -50,7 +52,7 @@ def advect3_gettable(order, Numpoints):
     temp = np.zeros(5)
     ltable = np.zeros((order + 1, 5))
 
-    fname = '/Users/rodell/repos/numeric_students/numeric_notebooks/labs_7b_8_10/Tables/l{0}_table.txt'.format(order)
+    fname = '/Users/rodell/repos/numeric_students/numeric_notebooks/labs_7b_8_10/Tables_cr/l{0}_table.txt'.format(order)
     fp = open(fname, 'r')
  
     for i in range(order+1):

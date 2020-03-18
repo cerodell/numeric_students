@@ -17,7 +17,7 @@ import sys
 def param():
     # set the physical parameters of the system
     Av = 5.e-2           # vertical eddy viscosity (m^2/s)
-    H = 500.               # depth (m)
+    H = 100.               # depth (m)
     rho = 1.0e3            # density of water (kg/m^3)
     latitude = 45.         # for calculating parameters of the beta-plane (deg)
     tau_max = 0.2          # wind stress maximum (kg m/s^2)

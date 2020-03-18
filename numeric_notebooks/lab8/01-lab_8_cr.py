@@ -19,40 +19,48 @@
 # $$
 # \\
 # $$
-# *To answer the question regarding computational cost. Based 
-# on the Cost of Schemes Table. The SOR is a bit more computational 
-# expense than the simpler Jacobi method. Also, the SOR improves
-#  convergence considerably as compared to the Jacobi method.* 
+# *To answer the question regarding computational cost.
+#  Based on the Cost of Schemes Table. The SOR is a
+#  bit more computational expense than the simpler 
+# Jacobi method. Also, the SOR improves convergence 
+# considerably as compared to the Jacobi method.* 
 # $$
 # \\
 # $$
-# *Looking at the SOR method using the loop set to true of false
-#  we find that when setting to true the function takes a few 
-#  one-thousandths of sec longer to run and also convergence
-#   to something logical that plots. While false is ever so slightly
-#    quicker the result is a convergence to values less than zero*
+# *Looking at the SOR method using the loop set to true or 
+# false we find that when set to true the function takes
+#  over one second longer to run than when set to false 
+# (with the default time step and coefficients). and also 
+# convergence to something logical that plots. Also when 
+# loop set to true the array converges to a large max
+#  value than when values 1.75 and 1.6 respectively. *
 # %% [markdown]
 # Plot using Successive Over-Relaxation with loop set to True
 # %%
 import context
-import numlabs.lab8.qg as qg
+# import numlabs.lab8.qg as qg
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 
 
+import numlabs.lab8.qg as qg
+# psi = qg(10*86400)
+# param = param()
+
 t = 10*86400
 start = time.time()
-qg.main((t, True))
+qg.main(t, True, 'param')
 end = time.time()
 print(end - start, "Time elapsed for loop set to True")
 
 # %% [markdown]
 # Plot using Successive Over-Relaxation with loop set to False
 # %%
+phys = 'param'
 start = time.time()
-qg.main((t, False))
+qg.main(t, False, phys)
 end = time.time()
 print(end - start, "Time elapsed for loop set to False")
 
@@ -72,11 +80,26 @@ print(end - start, "Time elapsed for loop set to False")
 # of the problem (eg depth, width of the ocean, vertical 
 # viscosity, wind stress, latitude) vary it (3 or 4 choices)
 #  and compare the solutions.
-
-# *I am using the SOR scheme as I was unable to get the Jacobi
-#  to work properly. Based on the lab the SOR improves
-#  convergence considerably as compared to the Jacobi method. *
 # $$
 # \\
-# $$
-#  
+# $$ 
+# I am using the SOR scheme set to false as the most
+#  efficient scheme( I was unable to get the Jacobi to 
+#  work properly and. the code ran fast when loop on false).
+#   Also, I chose SOR because SOR improves convergence
+# considerably as compared to the Jacobi method.  
+# # $$
+# # \\
+# # $$
+# The parameter I changed was depth from 500 meters to 
+# 100 meters. This made epsilon larger and overall made 
+# the stream function converge to a smaller number. 
+# %%
+import numlabs.lab8.qg_cr as qg_cr
+
+start = time.time()
+qg_cr.main(t, False, 'param_cr')
+end = time.time()
+print(end - start, "Time elapsed for loop set to False")
+
+# %%

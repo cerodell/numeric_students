@@ -100,7 +100,7 @@ class Approximator:
         
         # print(phi_ij[50,50],"centdif end")
         return phi_ij
-        
+
     #############################################
     # time discretization methods
     #############################################
@@ -147,33 +147,34 @@ class Approximator:
         """
         Ploting function
         """
-
-        ## Test plot of terrain 3D
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection="3d")
         rk3 = self.rk3()
 
-        ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='terrain')
+
+        ## Test plot of terrain 3D
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection="3d")
+
+
+        # ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='terrain')
   
 
-        # fig, ax = plt.subplots(1,1, figsize=(8,8))
 
         # cmap = cm.coolwarm
         # level = np.arange(-3,3,0.1)
         # v_line = np.arange(-3,3,0.8)
         # f2_ax3.set_title('MSLP Diff(YSU-Base)')
         # f2_ax3.coastlines('50m')
-        # level = np.arange(np.min(self.world),np.max(self.world),1)
-        # C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
+        level = np.arange(np.min(self.world),np.max(self.world),1)
+        C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
         # CS = ax.contour(self.xx,self.yy, self.world,cmap='terrain')
                         # transform=crs.PlateCarree(), levels = v_line, colors = 'k', linewidths = 0.5)
         # f2_ax3.clabel(CS, fmt = '%1.1d', colors = 'k', fontsize=4) #contour line labels
         # rk3 = self.rk3()
-        # C = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10)
+        C = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10)
 
 
 
-    #     fig, ax = plt.subplots(1,1, figsize=(12,4))
+        # fig, ax = plt.subplots(1,1, figsize=(12,4))
     #     fig.suptitle("Runge-Kutta 3rd order Centred in Space  CR: 0.5", fontsize= plt_set.title_size, fontweight="bold")
     #     ax.plot(self.xx, self.Pj, color = 'blue', label = "Initial concentration", zorder = 10)
     #     ax.plot(self.xx,self.cideal, color = 'red', label = "Final Ideal", zorder = 8)

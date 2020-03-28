@@ -25,7 +25,10 @@ class Approximator:
         persistence = 0.4
         lacunarity = 2.0
 
-        self.phi_ij = np.ones_like(self.shape)
+        phi_ij = np.ones(self.shape)
+        phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = 0
+        self.phi_ij = phi_ij
+
         world = np.zeros(self.shape)
         for i in range(self.shape[0]):
             for j in range(self.shape[1]):
@@ -42,9 +45,43 @@ class Approximator:
         lin_y = np.linspace(0,self.y,self.shape[1],endpoint=False)
         self.xx,self.yy = np.meshgrid(lin_x,lin_y)
         self.world = np.abs(world*500+200)
+        
+        self.dz = np.gradient(self.world)
+
 
         return
 
+    #############################################
+    # Advection Function 
+    #############################################
+    def advect_fun(self):
+        """
+        Fire rate of spread, Rf, parameteriziation defiend by Rothermel (1972)
+       
+        Variables
+        ----------
+        Rf: Fire Rate of Spread (ms^-1)
+        R0: Rate of spread in the absence of wind and terrain slope (ms^-1)
+
+        uf: Midflame height horizontal wind vector (ms^-1)
+        a1, a2, a3: Model coefficient for fuel characteristics defined by Anderson (1982) (?)
+        normal = moral graident 
+        k1, k2: Rf broken down into parts
+        Returns
+        -------
+        Rf: Fire Rate of Spread
+        """
+        normal = self.centdif() / np.abs(self.centdif())
+
+        k1 = 1 + self.a1 * np.power((self.uf * normal), self.a2)
+
+        k2 = self.a3 * np.power((self.zt * normal), 2)
+
+        Rf = self.R0 * (k1 +k2) * np.abs(self.centdif())
+
+        return Rf
+
+    
     #############################################
     # spatial discretization methods
     #############################################
@@ -52,25 +89,22 @@ class Approximator:
         """
         Centered difference spatial approximation
         """
-        # print(self.Pj[50],"centdif start")
-        phi_j = -self.u0 * ((np.roll(self.phi_j,-1) - np.roll(self.phi_j,1)) / (2 * self.dx))
-        
-        # print(Pj[50],"centdif end")
-        return phi_ij
+        phi_ij = self.phi_ij
 
-    def backdif(self):
-        """
-        Backward difference spatial approximation
-        """
-        # print(self.Pj[50],"backdif start")
-        phi_j = -self.u0 * ((self.phi_j - np.roll(self.phi_j,1)) / (self.dx))
+        k1 = np.roll(phi_ij , -1, axis = (0, 1))
+        k2 = np.roll(np.roll(phi_ij , -1, axis = 1), 1, axis = 0)
+        k3 = np.roll(np.roll(phi_ij , -1, axis = 0), 1, axis = 1)
+        k4 = np.roll(phi_ij , 1, axis = (0, 1))
+
+        phi_ij = (k1 - k2 - k3 - k4) / (4 * self.dx * self. dy)
         
-        # print(Pj[50],"backdif end")
+        # print(phi_ij[50,50],"centdif end")
         return phi_ij
-    
+        
     #############################################
     # time discretization methods
     #############################################
+
 
     def rk3(self):
         """
@@ -78,46 +112,67 @@ class Approximator:
         """
         phi_OG = self.phi_ij
 
-        phi_ijn1 = []
-
-        for n in range(len(self.time)):
-        
+        phi_n1 = []
+        x, y = 50, 50
+        for n in range(self.time):
+            print(n, 'time')
             phi_ij = self.phi_ij
-            # print(Pj[50], "Pj var")
-            P_str = Pj + (self.dt/3) * self.centdif()
-            # print(P_str[50], 'P_str')
+            print(phi_ij[y,x], "phi_ij var")
+            phi_str = phi_ij + (self.dt/3) * self.centdif()
+            # print(phi_str[y,x], 'phi_str')
 
-            self.Pj = P_str
-            # print(self.Pj[50], 'self Pj should be Pjstr')
+            self.phi_ij = phi_str
+            # print(self.phi_ij[y,x], 'self phi_ij should be phi_str')
 
-            P_str_str  = Pj + (self.dt/2) * self.centdif()
-            # print(P_str_str[50], 'P_str_str')
+            phi_str_str  = phi_ij + (self.dt/2) * self.centdif()
+            # print(phi_str_str[y,x], 'phi_str_str')
 
-            self.Pj = P_str_str
-            # print(self.Pj[50], 'self Pj should be Pj_str_str')
+            self.phi_ij = phi_str_str
+            # print(self.phi_ij[y,x], 'self phi_ij should be phi_str_str')
 
-            Pn  = Pj + self.dt * self.centdif()
-            Pn = np.array(Pn)
-            # print(Pn[50], "Pn pre append")
-            Pjn_1.append(Pn)
+            phi_n  = phi_ij + self.dt * self.centdif()
+            phi_n = np.array(phi_n)
+            print(phi_n[y,x], "phi_n pre append")
+            phi_n1.append(phi_n)
 
-            self.Pj = Pn
-            # print(self.Pj[50], "self Pj or Pn")
+            self.phi_ij = phi_n
 
-        Pjn_1 = np.array(Pjn_1)
-        self.Pj = Pj_OG
+        phi_n1 = np.stack(phi_n1)
+        print(phi_n1.shape)
+        self.phi_ij = phi_OG
 
-        return Pjn_1
+        return phi_n1
 
     def plot_functions(self):
+        """
+        Ploting function
+        """
 
-        ## Test plot of terrain
+        ## Test plot of terrain 3D
         fig = plt.figure()
         ax = fig.add_subplot(111, projection="3d")
-        ax.plot_surface(self.xx,self.yy, self.world,cmap='terrain')
+        rk3 = self.rk3()
 
-        plt.show()
+        ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='terrain')
   
+
+        # fig, ax = plt.subplots(1,1, figsize=(8,8))
+
+        # cmap = cm.coolwarm
+        # level = np.arange(-3,3,0.1)
+        # v_line = np.arange(-3,3,0.8)
+        # f2_ax3.set_title('MSLP Diff(YSU-Base)')
+        # f2_ax3.coastlines('50m')
+        # level = np.arange(np.min(self.world),np.max(self.world),1)
+        # C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
+        # CS = ax.contour(self.xx,self.yy, self.world,cmap='terrain')
+                        # transform=crs.PlateCarree(), levels = v_line, colors = 'k', linewidths = 0.5)
+        # f2_ax3.clabel(CS, fmt = '%1.1d', colors = 'k', fontsize=4) #contour line labels
+        # rk3 = self.rk3()
+        # C = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10)
+
+
+
     #     fig, ax = plt.subplots(1,1, figsize=(12,4))
     #     fig.suptitle("Runge-Kutta 3rd order Centred in Space  CR: 0.5", fontsize= plt_set.title_size, fontweight="bold")
     #     ax.plot(self.xx, self.Pj, color = 'blue', label = "Initial concentration", zorder = 10)
@@ -131,6 +186,7 @@ class Approximator:
     #     ax.set_ylim(-10,15)
     #     ax.legend()
     #     plt.show()
+        plt.show()
 
         return
 

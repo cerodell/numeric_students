@@ -11,26 +11,42 @@ from mpl_toolkits.mplot3d import axes3d
 class Approximator:
 
     #############################################
-    # initialize condtions
+    # Initialize condtions
     #############################################
     def __init__(self, valueDict):
         """
         Create the grid and initial conditions
         """
-        ##  Defined conditions from dictonary
+        ############################################################
+        ############ Initial conditions from dictionary ############
+        ############################################################
         self.__dict__.update(valueDict)
 
-        scale = 100.0
-        octaves = 6
-        persistence = 0.4
-        lacunarity = 2.0
+        xshape = int(self.x/self.dx)
+        yshape = int(self.y/self.dy)
+        self.shape = (xshape, yshape)
+        print(self.shape, "Domain is shape")
+        ############################################################
 
+
+        ############################################################
+        ############## Define the function of phi ##################
+        ############################################################
         # phi_ij = np.ones(self.shape)
         # phi_ij = np.random.randn(100,100)
         phi_ij = np.ones(self.shape)
         phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
         self.phi_ij = phi_ij
+        ############################################################
 
+
+        ############################################################
+        ############## Define the terrian aka world ################
+        ############################################################
+        scale = 100.0
+        octaves = 6
+        persistence = 0.4
+        lacunarity = 2.0
         world = np.zeros(self.shape)
         for i in range(self.shape[0]):
             for j in range(self.shape[1]):
@@ -47,14 +63,13 @@ class Approximator:
         lin_y = np.linspace(0,self.y,self.shape[1],endpoint=False)
         self.xx,self.yy = np.meshgrid(lin_x,lin_y)
         self.world = np.abs(world*500-2)
-        
-        # self.dz = np.gradient(self.world)
+        ############################################################
 
 
         return
 
     #############################################
-    # Advection Function 
+    ############# Advection Function ############
     #############################################
     def advect_fun(self):
         """
@@ -69,6 +84,7 @@ class Approximator:
         a1, a2, a3: Model coefficient for fuel characteristics defined by Anderson (1982) (?)
         normal = moral graident 
         k1, k2: Rf broken down into parts
+        
         Returns
         -------
         Rf: Fire Rate of Spread
@@ -91,11 +107,15 @@ class Approximator:
 
     
     #############################################
-    # spatial discretization methods
+    ###### Spatial discretization methods #######
     #############################################
     def centdif(self):
         """
         Centered difference spatial approximation
+
+        Returns
+        -------
+        phi_ij: dimensionless
         """
         phi_ij = self.phi_ij
 
@@ -112,6 +132,10 @@ class Approximator:
     def dZ(self):
         """
         Centered difference spatial approximation
+
+        Returns
+        -------
+        dZ: gradient of terrain (dz/dx,dz/dy)
         """
         z = self.world
 
@@ -126,13 +150,18 @@ class Approximator:
         return dZ
 
     #############################################
-    # time discretization methods
+    ######## Time discretization methods ########
     #############################################
 
 
     def rk3(self):
         """
         Runge-Kutta 3rd order Centred in Space
+        
+        Returns
+        -------
+        phi_n1: next time step of phi_ij
+
         """
         phi_OG = self.phi_ij
 
@@ -167,6 +196,10 @@ class Approximator:
 
         return phi_n1
 
+
+    #############################################
+    ############ Ploting functions ##############
+    #############################################
     def plot_functions(self):
         """
         Ploting function
@@ -188,13 +221,13 @@ class Approximator:
         # v_line = np.arange(-3,3,0.8)
         # f2_ax3.set_title('MSLP Diff(YSU-Base)')
         # f2_ax3.coastlines('50m')
-        level = np.arange(np.min(self.world),np.max(self.world),1)
-        C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
+        # level = np.arange(np.min(self.world),np.max(self.world),1)
+        # C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
         # CS = ax.contour(self.xx,self.yy, self.world,cmap='terrain')
                         # transform=crs.PlateCarree(), levels = v_line, colors = 'k', linewidths = 0.5)
         # f2_ax3.clabel(CS, fmt = '%1.1d', colors = 'k', fontsize=4) #contour line labels
         # rk3 = self.rk3()
-        # C = ax.contourf(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
+        C = ax.contourf(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
 
 
 

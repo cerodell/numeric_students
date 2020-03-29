@@ -10,7 +10,7 @@ import matplotlib.animation as animation
 
 ## Create the grid and initial conditions
 initialVals={'x': 10000, 'y': 10000,  'dx':100., 'dy':100 
-                 ,'dt':10. , 'uf': 5., 'shape': (100,100), 'time': 1000
+                 ,'dt':10. , 'uf': 5., 'time': 1000
                    ,'yf_start': 40, 'yf_end': 60, 'xf_start': 50, 'xf_end':52, 
                          'R0': 1.2, 'a1': 1, 'a2': 1, 'a3': 1,  }
 
@@ -18,7 +18,7 @@ initialVals={'x': 10000, 'y': 10000,  'dx':100., 'dy':100
 
 coeff = Approximator(initialVals)
 
-################################################## ######################
+########################################################################
 
 # rk3 = coeff.rk3()
 

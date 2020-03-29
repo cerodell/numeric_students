@@ -37,6 +37,7 @@ class Approximator:
         phi_ij = np.ones(self.shape)
         phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
         self.phi_ij = phi_ij
+        print(phi_ij[5,5], 'phi_ij Initial')
         ############################################################
 
 
@@ -185,9 +186,15 @@ class Approximator:
 
             phi_n  = phi_ij + self.dt * self.advect_fun()
             phi_n = np.array(phi_n)
-            print(phi_n[y,x], "phi_n pre append")
-            phi_n1.append(phi_n)
+            print(phi_n[y,x], "phi_n pre where")
+            
+            phi_n = np.where(phi_n < 0, phi_n, -0.1)
+            print(phi_n[y,x], "phi_n post where")
 
+            # phi_n = np.where(phi_n < 0, phi_n, 1)
+            # print(phi_n[y,x], "phi_n post where")
+
+            phi_n1.append(phi_n)
             self.phi_ij = phi_n
 
         phi_n1 = np.stack(phi_n1)

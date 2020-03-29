@@ -24,22 +24,24 @@ coeff = Approximator(initialVals)
 
 ########################################################################
 
-plot = coeff.plot_functions()
+# plot = coeff.plot_functions()
 
 
 ########################################################################
 ########################################################################
-# level = np.arange(np.min(coeff.world),np.max(coeff.world),1)
-# fig,ax = plt.subplots()
-# def animate(i):
-#        ax.clear()
-#        ax.contour(coeff.xx,coeff.yy,rk3[i,:,:], zorder = 10, cmap='Reds')
-#        # ax.contourf(coeff.xx,coeff.yy, coeff.world,cmap='terrain', levels = level, zorder =1)
+rk3 = coeff.rk3()
 
-#        ax.set_title('%03d'%(i)) 
-# interval = 0.01#in seconds     
-# ani = animation.FuncAnimation(fig,animate,1000,interval=interval*1e+3,blit=False)
-# # plt.show()
+level = np.arange(np.min(coeff.world),np.max(coeff.world),1)
+fig,ax = plt.subplots()
+def animate(i):
+       ax.clear()
+       ax.contour(coeff.xx,coeff.yy,rk3[i,:,:], zorder = 10, cmap='Reds')
+       # ax.contourf(coeff.xx,coeff.yy, coeff.world,cmap='terrain', levels = level, zorder =1)
+
+       ax.set_title('%03d'%(i)) 
+interval = 0.01#in seconds     
+ani = animation.FuncAnimation(fig,animate,coeff.time,interval=interval*1e+3,blit=False)
+plt.show()
 # ani.save('/Users/rodell/Desktop/fire_fail.mp4', fps=30)
 
 ########################################################################

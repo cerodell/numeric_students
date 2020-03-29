@@ -23,41 +23,41 @@ from mpl_toolkits.mplot3d import axes3d
 timer = np.arange(10)
 
 shape = (100,100)
-# scale = 100.0
-# octaves = 6
-# persistence = 0.4
-# lacunarity = 2.0
+scale = 100.0
+octaves = 6
+persistence = 0.4
+lacunarity = 2.0
 
-# world = np.zeros(shape)
-# for i in range(shape[0]):
-#     for j in range(shape[1]):
-#         world[i][j] = noise.pnoise2(i/scale, 
-#                                     j/scale, 
-#                                     octaves=octaves, 
-#                                     persistence=persistence, 
-#                                     lacunarity=lacunarity, 
-#                                     repeatx=1024, 
-#                                     repeaty=1024, 
-#                                     base=42)
+world = np.zeros(shape)
+for i in range(shape[0]):
+    for j in range(shape[1]):
+        world[i][j] = noise.pnoise2(i/scale, 
+                                    j/scale, 
+                                    octaves=octaves, 
+                                    persistence=persistence, 
+                                    lacunarity=lacunarity, 
+                                    repeatx=1024, 
+                                    repeaty=1024, 
+                                    base=42)
 
-# lin_x = np.linspace(0,10000,shape[0],endpoint=False)
-# lin_y = np.linspace(0,10000,shape[1],endpoint=False)
-# xx,yy = np.meshgrid(lin_x,lin_y)
-# worldcr = np.abs(world*500+200)
+lin_x = np.linspace(0,10000,shape[0],endpoint=False)
+lin_y = np.linspace(0,10000,shape[1],endpoint=False)
+xx,yy = np.meshgrid(lin_x,lin_y)
+worldcr = np.abs(world*500-2)
 
+print(worldcr.shape)
 
-
-# test = np.gradient(worldcr)
-# print(x.shape)
+test = np.gradient(worldcr)
+# print(test.shape)
 # # 
 
 # # worldcr = np.where(world>0, world, 0.001)
-# # worldcr = np.abs(world*500+200)
-# # fig = plt.figure()
-# # ax = fig.add_subplot(111, projection="3d")
-# # ax.plot_surface(xx,yy,worldcr,cmap='terrain')
+# worldcr = np.abs(world*500+200)
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+ax.plot_surface(xx,yy,worldcr,cmap='terrain')
 
-# # plt.show()
+plt.show()
 
 
 # phi = np.ones(shape)

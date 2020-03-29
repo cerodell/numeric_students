@@ -18,7 +18,7 @@ initialVals={'x': 10000, 'y': 10000,  'dx':100., 'dy':100
 
 coeff = Approximator(initialVals)
 
-########################################################################
+################################################## ######################
 
 # rk3 = coeff.rk3()
 
@@ -33,13 +33,15 @@ plot = coeff.plot_functions()
 # fig,ax = plt.subplots()
 # def animate(i):
 #        ax.clear()
-#        ax.contour(rk3[i,:,:],20, zorder = 10, cmap='Reds')
+#        ax.contour(coeff.xx,coeff.yy,rk3[i,:,:], zorder = 10, cmap='Reds')
 #        # ax.contourf(coeff.xx,coeff.yy, coeff.world,cmap='terrain', levels = level, zorder =1)
 
 #        ax.set_title('%03d'%(i)) 
 # interval = 0.01#in seconds     
-# ani = animation.FuncAnimation(fig,animate,100,interval=interval*1e+3,blit=False)
-# plt.show()
+# ani = animation.FuncAnimation(fig,animate,1000,interval=interval*1e+3,blit=False)
+# # plt.show()
+# ani.save('/Users/rodell/Desktop/fire_fail.mp4', fps=30)
+
 ########################################################################
 ########################################################################
 

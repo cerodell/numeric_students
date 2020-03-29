@@ -26,8 +26,9 @@ class Approximator:
         lacunarity = 2.0
 
         # phi_ij = np.ones(self.shape)
-        phi_ij = np.random.randn(100,100)
-        phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = 0
+        # phi_ij = np.random.randn(100,100)
+        phi_ij = np.ones(self.shape)
+        phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
         self.phi_ij = phi_ij
 
         world = np.zeros(self.shape)
@@ -74,17 +75,17 @@ class Approximator:
         """
         y, x = 50, 50
         normal = self.centdif() / np.abs(self.centdif())
-        print(normal[y,x], 'normal')
+        # print(normal[y,x], 'normal')
         # print(normal.shape, 'normal shape')
 
         k1 = 1 + self.a1 * np.power((self.uf * normal), self.a2)
-        print(k1[y,x], 'k1')
+        # print(k1[y,x], 'k1')
         k2 = self.a3 * np.power((self.dZ() * normal), 2)
-        print(k2[y,x], 'k2')
+        # print(k2[y,x], 'k2')
 
         Rf = self.R0 * (k1 + k2) * np.abs(self.centdif())
-        print(Rf[y,x], 'Rf')
-        print(np.max(Rf), 'Rf max')
+        # print(Rf[y,x], 'Rf')
+        # print(np.max(Rf), 'Rf max')
 
         return Rf
 
@@ -136,26 +137,26 @@ class Approximator:
         phi_OG = self.phi_ij
 
         phi_n1 = []
-        x, y = 50, 50
+        x, y = 5, 5
         for n in range(self.time):
             print(n, 'time')
             phi_ij = self.phi_ij
-            # print(phi_ij[y,x], "phi_ij var")
+            print(phi_ij[y,x], "phi_ij var")
             phi_str = phi_ij + (self.dt/3) * self.advect_fun()
-            # print(phi_str[y,x], 'phi_str')
+            print(phi_str[y,x], 'phi_str')
 
             self.phi_ij = phi_str
-            # print(self.phi_ij[y,x], 'self phi_ij should be phi_str')
+            print(self.phi_ij[y,x], 'self phi_ij should be phi_str')
 
             phi_str_str  = phi_ij + (self.dt/2) * self.advect_fun()
-            # print(phi_str_str[y,x], 'phi_str_str')
+            print(phi_str_str[y,x], 'phi_str_str')
 
             self.phi_ij = phi_str_str
-            # print(self.phi_ij[y,x], 'self phi_ij should be phi_str_str')
+            print(self.phi_ij[y,x], 'self phi_ij should be phi_str_str')
 
             phi_n  = phi_ij + self.dt * self.advect_fun()
             phi_n = np.array(phi_n)
-            # print(phi_n[y,x], "phi_n pre append")
+            print(phi_n[y,x], "phi_n pre append")
             phi_n1.append(phi_n)
 
             self.phi_ij = phi_n
@@ -188,12 +189,12 @@ class Approximator:
         # f2_ax3.set_title('MSLP Diff(YSU-Base)')
         # f2_ax3.coastlines('50m')
         level = np.arange(np.min(self.world),np.max(self.world),1)
-        # C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
+        C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
         # CS = ax.contour(self.xx,self.yy, self.world,cmap='terrain')
                         # transform=crs.PlateCarree(), levels = v_line, colors = 'k', linewidths = 0.5)
         # f2_ax3.clabel(CS, fmt = '%1.1d', colors = 'k', fontsize=4) #contour line labels
         # rk3 = self.rk3()
-        C = ax.contourf(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
+        # C = ax.contourf(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
 
 
 

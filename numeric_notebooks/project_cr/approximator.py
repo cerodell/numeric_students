@@ -36,7 +36,7 @@ class Approximator:
         # phi_ij = np.random.randn(100,100)
         phi_ij = np.ones(self.shape)
         phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
-        self.phi_ij = phi_ij
+        self.phi_ij = phi_ij 
         print(phi_ij[5,5], 'phi_ij Initial')
         ############################################################
 
@@ -68,6 +68,7 @@ class Approximator:
 
 
         return
+
 
     #############################################
     ############# Advection Function ############
@@ -101,6 +102,8 @@ class Approximator:
         # print(k2[y,x], 'k2')
 
         Rf = self.R0 * (k1 + k2) * np.abs(self.centdif())
+        # Rf = self.R0 * (k1 + k2)
+
         # print(Rf[y,x], 'Rf')
         # print(np.max(Rf), 'Rf max')
 
@@ -130,6 +133,7 @@ class Approximator:
         # print(phi_ij[54,50],"centdif phi")
         return phi_ij
 
+
     def dZ(self):
         """
         Centered difference spatial approximation
@@ -150,6 +154,7 @@ class Approximator:
         # print(z[54,50],"centdif dZ")
         return dZ
 
+
     #############################################
     ######## Time discretization methods ########
     #############################################
@@ -167,7 +172,7 @@ class Approximator:
         phi_OG = self.phi_ij
 
         phi_n1 = []
-        x, y = 5, 5
+        x, y = 50, 50
         for n in range(self.time):
             print(n, 'time')
             phi_ij = self.phi_ij
@@ -207,51 +212,68 @@ class Approximator:
     #############################################
     ############ Ploting functions ##############
     #############################################
-    def plot_functions(self):
+    def plot_3D(self):
         """
-        Ploting function
+        ################################
+        ## Terrain 3D Plot
+        ################################        
         """
-        rk3 = self.rk3()
+        plane1 = np.ones(self.shape) * 45
+        # plane = self.phi_ij * 45
+        fig = plt.figure(figsize=(12,6))
+        fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
+        ax = fig.add_subplot(111, projection="3d")
+        ter = ax.plot_surface(self.xx,self.yy, self.world,cmap='terrain', zorder = 10)
+        # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
+        ax.plot_surface(self.xx,self.yy, plane1 ,cmap='Reds_r', alpha = .8, zorder = 1)
 
-
-        ## Test plot of terrain 3D
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111, projection="3d")
-
-
-        # ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='terrain')
-  
-
-        fig, ax = plt.subplots(1,1, figsize=(8,8))
-        # cmap = cm.coolwarm
-        # level = np.arange(-3,3,0.1)
-        # v_line = np.arange(-3,3,0.8)
-        # f2_ax3.set_title('MSLP Diff(YSU-Base)')
-        # f2_ax3.coastlines('50m')
-        # level = np.arange(np.min(self.world),np.max(self.world),1)
-        # C = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder =4)
-        # CS = ax.contour(self.xx,self.yy, self.world,cmap='terrain')
-                        # transform=crs.PlateCarree(), levels = v_line, colors = 'k', linewidths = 0.5)
-        # f2_ax3.clabel(CS, fmt = '%1.1d', colors = 'k', fontsize=4) #contour line labels
-        # rk3 = self.rk3()
-        C = ax.contourf(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
-
-
-
-        # fig, ax = plt.subplots(1,1, figsize=(12,4))
-    #     fig.suptitle("Runge-Kutta 3rd order Centred in Space  CR: 0.5", fontsize= plt_set.title_size, fontweight="bold")
-    #     ax.plot(self.xx, self.Pj, color = 'blue', label = "Initial concentration", zorder = 10)
-    #     ax.plot(self.xx,self.cideal, color = 'red', label = "Final Ideal", zorder = 8)
-    #     Prk3 = self.rk3()
-    #     ax.plot(self.xx,Prk3.T[:,-1], color = 'green', label = "RK3", zorder = 9)
-    #     ax.set_xlabel('Grid Index (i)', fontsize = plt_set.label)
-    #     ax.set_ylabel('Quantity', fontsize = plt_set.label)
-    #     ax.xaxis.grid(color='gray', linestyle='dashed')
-    #     ax.yaxis.grid(color='gray', linestyle='dashed')
-    #     ax.set_ylim(-10,15)
-    #     ax.legend()
-    #     plt.show()
+        ax.set_xlabel('Distance (X: m)', fontsize = 14)
+        ax.set_ylabel('Distance (Y: m)', fontsize = 14)
+        ax.set_zlabel('Height (Z: m)', fontsize = 14)
+        fig.colorbar(ter, shrink=0.5, aspect=5)
         plt.show()
+
+        return
+
+
+    def plot_main(self):
+        """
+        ################################################
+        ## Fire line overlayed on Terrain contourf Plot
+        ################################################
+        """
+
+        rk3 = self.rk3()
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+        fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
+        level = np.arange(np.min(self.world),np.max(self.world),1)
+        ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
+        ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder = 1)
+        ax.set_xlabel('Distance (X: m)', fontsize = 14)
+        ax.set_ylabel('Distance (Y: m)', fontsize = 14)
+        plt.show()
+
+        return
+
+
+    def plot_test(self):
+        """
+        ################################################
+        ## Play Plot fucntion
+        ################################################
+        """
+
+        # fig, ax = plt.subplots(1,1, figsize=(8,8))
+        # fig.suptitle("Runge-Kutta 3rd order Centred in Space  CR: 0.5", fontsize= plt_set.title_size, fontweight="bold")
+        # Prk3 = self.rk3()
+        # ax.plot(self.xx,Prk3.T[:,-1], color = 'green', label = "RK3", zorder = 9)
+        # ax.set_xlabel('Grid Index (i)', fontsize = plt_set.label)
+        # ax.set_ylabel('Quantity', fontsize = plt_set.label)
+        # ax.xaxis.grid(color='gray', linestyle='dashed')
+        # ax.yaxis.grid(color='gray', linestyle='dashed')
+        # ax.set_ylim(-10,15)
+        # ax.legend()
+        # plt.show()
 
         return
 

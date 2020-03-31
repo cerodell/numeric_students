@@ -30,18 +30,6 @@ class Approximator:
 
 
         ############################################################
-        ############## Define the function of phi ##################
-        ############################################################
-        # phi_ij = np.ones(self.shape)
-        # phi_ij = np.random.randn(100,100)
-        phi_ij = np.ones(self.shape)
-        phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
-        self.phi_ij = phi_ij 
-        print(phi_ij[5,5], 'phi_ij Initial')
-        ############################################################
-
-
-        ############################################################
         ############## Define the terrian aka world ################
         ############################################################
         scale = 100.0
@@ -63,9 +51,28 @@ class Approximator:
         lin_x = np.linspace(0,self.x,self.shape[0],endpoint=False)
         lin_y = np.linspace(0,self.y,self.shape[1],endpoint=False)
         self.xx,self.yy = np.meshgrid(lin_x,lin_y)
-        self.world = np.abs(world*500-2)
+        self.world = world*6000
         ############################################################
 
+
+        ############################################################
+        ############## Define the function of phi ##################
+        ############################################################
+        # phi_ij = np.ones(self.shape)
+        # phi_ij = np.random.randn(100,100)
+        # phi_ij = np.ones(self.shape) 
+        # phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
+        # self.phi_ij = phi_ij 
+        # print(phi_ij[5,5], 'phi_ij Initial')
+
+        def LoG(x, y, sigma):
+            phi = (x ** 2 + y ** 2) / (2 * sigma ** 2)
+            return -1 / (np.pi * sigma ** 4) * (1 - phi) * np.exp(-phi)
+
+        half_N = self.x // 2
+        zz = -LoG(self.xx - half_N, self.yy - half_N, sigma=100) * 30e10
+        self.zz = np.where(zz > 0, zz, 0)
+        ############################################################
 
         return
 
@@ -99,11 +106,13 @@ class Approximator:
         k1 = 1 + self.a1 * np.power((self.uf * normal), self.a2)
         # print(k1[y,x], 'k1')
         k2 = self.a3 * np.power((self.dZ() * normal), 2)
-        # print(k2[y,x], 'k2')
+        print(k2[y,x], 'k2')
+        zz =  self.dZ()
+        print(zz[44,73], 'zz')
+
 
         Rf = self.R0 * (k1 + k2) * np.abs(self.centdif())
-        # Rf = self.R0 * (k1 + k2)
-
+        # Rf = self.R0 * np.abs(self.centdif())
         # print(Rf[y,x], 'Rf')
         # print(np.max(Rf), 'Rf max')
 
@@ -194,7 +203,7 @@ class Approximator:
             print(phi_n[y,x], "phi_n pre where")
             
             phi_n = np.where(phi_n < 0, phi_n, -0.1)
-            print(phi_n[y,x], "phi_n post where")
+            # print(phi_n[y,x], "phi_n post where")
 
             # phi_n = np.where(phi_n < 0, phi_n, 1)
             # print(phi_n[y,x], "phi_n post where")
@@ -212,7 +221,7 @@ class Approximator:
     #############################################
     ############ Ploting functions ##############
     #############################################
-    def plot_3D(self):
+    def plot_Ter3D(self):
         """
         ################################
         ## Terrain 3D Plot
@@ -235,6 +244,29 @@ class Approximator:
 
         return
 
+    def plot_Phi3D(self):
+        """
+        ################################
+        ## Phi 3D Plot
+        ################################        
+        """
+        # plane1 = np.ones(self.shape) * 45
+        # plane = self.phi_ij * 45
+        fig = plt.figure(figsize=(12,6))
+        fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
+        ax = fig.add_subplot(111, projection="3d")
+        ter = ax.plot_surface(self.xx,self.yy, self.zz,cmap='r', zorder = 10)
+        # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
+        # ax.plot_surface(self.xx,self.yy, plane1 ,cmap='Reds_r', alpha = .8, zorder = 1)
+
+        ax.set_xlabel('Distance (X: m)', fontsize = 14)
+        ax.set_ylabel('Distance (Y: m)', fontsize = 14)
+        ax.set_zlabel('Height (Z: m)', fontsize = 14)
+        fig.colorbar(ter, shrink=0.5, aspect=5)
+        plt.show()
+
+        return
+
 
     def plot_main(self):
         """
@@ -247,8 +279,10 @@ class Approximator:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
         level = np.arange(np.min(self.world),np.max(self.world),1)
-        ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
+        fire = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
         ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder = 1)
+        # fig.colorbar(fire, shrink=0.5, aspect=5)
+
         ax.set_xlabel('Distance (X: m)', fontsize = 14)
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)
         plt.show()

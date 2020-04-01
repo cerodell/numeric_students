@@ -6,11 +6,13 @@ spatialvars:
   y: 1000
   dx: 10
   dy: 10
-uservars:
+fire:
   xf_start: 50
   xf_end: 52
   yf_start: 40
   yf_end: 60
+firecoeff:
+  uf: 2.
   R0: 1.2
   a1: 1.
   a2: 0.5

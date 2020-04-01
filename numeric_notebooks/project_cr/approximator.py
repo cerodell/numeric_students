@@ -1,12 +1,12 @@
 import context
+
 import noise
 import yaml
 import numpy as np
+from context import this_dir
 import matplotlib.pyplot as plt
 from collections import namedtuple 
 from mpl_toolkits.mplot3d import axes3d
-
-
 
 
 class Approximator:
@@ -14,21 +14,34 @@ class Approximator:
     #############################################
     # Initialize condtions
     #############################################
-    def __init__(self, valueDict):
+    def __init__(self, namelist):
         """
         Create the grid and initial conditions
         """
+ 
         ############################################################
-        ############ Initial conditions from dictionary ############
+        ######### Initial conditions from namelist.yaml ############
         ############################################################
-        # self.__dict__.update(valueDict)
-        super().__init__(valueDict)
-        self.set_yinit()
+        fileY = open(this_dir / namelist, 'r')
+        config = yaml.load(fileY, Loader=yaml.SafeLoader)
+        self.config = config
 
-        xshape = int(self.x/self.dx)
-        yshape = int(self.y/self.dy)
+        timevars = namedtuple('timevars',config['timevars'].keys())
+        self.timevars = timevars(**config['timevars'])
+
+        spatialvars = namedtuple('spatialvars', config['spatialvars'].keys())
+        self.spatialvars = spatialvars(**config['spatialvars'])
+
+        fire = namedtuple('fire', config['fire'].keys())
+        self.fire = fire(**config['fire'])
+
+        firecoeff = namedtuple('firecoeff', config['firecoeff'].keys())
+        self.firecoeff = firecoeff(**config['firecoeff'])
+
+        xshape = int(self.spatialvars.x/self.spatialvars.dx)
+        yshape = int(self.spatialvars.y/self.spatialvars.dy)
         self.shape = (xshape, yshape)
-        print(self.shape, "Domain is shape")
+        print(self.shape, "Domain Shape")
         ############################################################
 
 
@@ -51,8 +64,8 @@ class Approximator:
                                             repeaty=1024, 
                                             base=42)
 
-        lin_x = np.linspace(0,self.x,self.shape[0],endpoint=False)
-        lin_y = np.linspace(0,self.y,self.shape[1],endpoint=False)
+        lin_x = np.linspace(0,self.spatialvars.x,self.shape[0],endpoint=False)
+        lin_y = np.linspace(0,self.spatialvars.y,self.shape[1],endpoint=False)
         self.xx,self.yy = np.meshgrid(lin_x,lin_y)
         self.world = np.abs(world*6000)
         ############################################################
@@ -64,7 +77,10 @@ class Approximator:
         # phi_ij = np.ones(self.shape)
         phi_ij = np.random.randint(1,100, size=self.shape)
         # phi_ij = np.ones(self.shape) 
-        phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -np.random.randint(1,100, size=(20,2))
+
+        xf_start, xf_end, yf_start, yf_end = self.fire
+        phi_ij[yf_start:yf_end, xf_start:xf_end] = -np.random.randint(1,100, size=(20,2))
+        
         self.phi_ij = phi_ij 
         print(phi_ij[50,50], 'phi_ij Initial')
 
@@ -101,21 +117,22 @@ class Approximator:
         -------
         Rf: Fire Rate of Spread
         """
+        uf, R0, a1, a2, a3 = self.firecoeff
         y, x = 50, 50
         print(np.max(self.centdif()), "cent diff in fire fun")
         normal = self.centdif() / np.abs(self.centdif())
         # print(normal[y,x], 'normal')
         # print(normal.shape, 'normal shape')
 
-        k1 = 1 + self.a1 * np.power((self.uf * normal), self.a2)
+        k1 = 1 + a1 * np.power((uf * normal), a2)
         # print(k1[y,x], 'k1')
-        k2 = self.a3 * np.power((self.dZ() * normal), 2)
+        k2 = a3 * np.power((self.dZ() * normal), 2)
         # print(k2[y,x], 'k2')
         zz =  self.dZ()
         # print(zz[y,x], 'zz')
 
 
-        Rf = -1 * self.R0 * (k1 + k2) * np.abs(self.centdif())
+        Rf = -1 * R0 * (k1 + k2) * np.abs(self.centdif())
         # Rf = self.R0 * np.abs(self.centdif())
         # print(Rf[y,x], 'Rf')
         # print(np.max(Rf), 'Rf max')
@@ -134,6 +151,8 @@ class Approximator:
         -------
         phi_ij: dimensionless
         """
+        x, y, dx, dy = self.spatialvars
+
         phi_ij = self.phi_ij
         print(phi_ij[50,50],"centdif phi start")
 
@@ -146,7 +165,7 @@ class Approximator:
         k4 = np.roll(phi_ij , 1, axis = (0, 1))
         print(k4[50,50], "k4 cent")
 
-        phi_ij = (k1 - k2 - k3 + k4) / (4 * self.dx * self.dy)
+        phi_ij = (k1 - k2 - k3 + k4) / (4 * dx * dy)
         
         print(phi_ij[50,50],"centdif phi end")
         return phi_ij
@@ -160,6 +179,8 @@ class Approximator:
         -------
         dZ: gradient of terrain (dz/dx,dz/dy)
         """
+        x, y, dx, dy = self.spatialvars
+
         z = self.world
 
         k1 = np.roll(z , -1, axis = (0, 1))
@@ -167,7 +188,7 @@ class Approximator:
         k3 = np.roll(np.roll(z , -1, axis = 0), 1, axis = 1)
         k4 = np.roll(z , 1, axis = (0, 1))
 
-        dZ = (k1 - k2 - k3 + k4) / (4 * self.dx * self.dy)
+        dZ = (k1 - k2 - k3 + k4) / (4 * dx * dy)
         
         # print(z[54,50],"centdif dZ")
         return dZ
@@ -176,8 +197,6 @@ class Approximator:
     #############################################
     ######## Time discretization methods ########
     #############################################
-
-
     def rk3(self):
         """
         Runge-Kutta 3rd order Centred in Space
@@ -187,27 +206,28 @@ class Approximator:
         phi_n1: next time step of phi_ij
 
         """
+        dt, nsteps = self.timevars
         phi_OG = self.phi_ij
 
         phi_n1 = []
         x, y = 5, 5
-        for n in range(self.nsteps):
-            print(n * self.dt, 'time')
+        for n in range(nsteps):
+            print(n * dt, 'time')
             phi_ij = self.phi_ij
             # print(phi_ij[y,x], "phi_ij var")
-            phi_str = phi_ij + (self.dt/3) * self.advect_fun()
+            phi_str = phi_ij + (dt/3) * self.advect_fun()
             # print(phi_str[y,x], 'phi_str')
 
             self.phi_ij = phi_str
             # print(self.phi_ij[y,x], 'self phi_ij should be phi_str')
 
-            phi_str_str  = phi_ij + (self.dt/2) * self.advect_fun()
+            phi_str_str  = phi_ij + (dt/2) * self.advect_fun()
             # print(phi_str_str[y,x], 'phi_str_str')
 
             self.phi_ij = phi_str_str
             # print(self.phi_ij[y,x], 'self phi_ij should be phi_str_str')
 
-            phi_n  = phi_ij + self.dt * self.advect_fun()
+            phi_n  = phi_ij + dt * self.advect_fun()
             phi_n = np.array(phi_n)
             # print(phi_n[y,x], "phi_n pre where")
             
@@ -232,9 +252,7 @@ class Approximator:
     #############################################
     def plot_Ter3D(self):
         """
-        ################################
-        ## Terrain 3D Plot
-        ################################        
+        Terrain 3D Plot     
         """
         plane1 = np.ones(self.shape) * 45
         # plane = self.phi_ij * 45
@@ -255,9 +273,7 @@ class Approximator:
 
     def plot_Phi3D(self):
         """
-        ################################
-        ## Phi 3D Plot
-        ################################        
+        Phi 3D Plot
         """
         rk3 = self.rk3()
         # plane1 = np.ones(self.shape) * 45
@@ -280,9 +296,7 @@ class Approximator:
 
     def plot_main(self):
         """
-        ################################################
-        ## Fire line overlayed on Terrain contourf Plot
-        ################################################
+        Fire line overlayed on Terrain contourf Plot
         """
 
         rk3 = self.rk3()
@@ -302,9 +316,7 @@ class Approximator:
 
     def plot_test(self):
         """
-        ################################################
-        ## Play Plot fucntion
-        ################################################
+        Play Plot fucntion
         """
 
         # fig, ax = plt.subplots(1,1, figsize=(8,8))

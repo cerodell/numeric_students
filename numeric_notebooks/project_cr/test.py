@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 
 
-
 # A = np.array([[1, 2, 6, 7], [3, 4, 5, 2], [1,4, 8, 12], [13, 5, 7, 14]])
 # dA = np.gradient(A)
 
@@ -23,6 +22,8 @@ from mpl_toolkits.mplot3d import axes3d
 # timer = np.arange(10)
 
 shape = (100,100)
+
+test = np.random.randint(1,10, size=shape)
 # scale = 100.0
 # octaves = 6
 # persistence = 0.4
@@ -60,7 +61,7 @@ half_N = 10000 // 2
 # X2, Y2 = np.meshgrid(range(N), range(N))
 
 # Z2 = -LoG(xx - half_N, yy - half_N, sigma=1000) *10000000000000000
-zz = LoG(xx - half_N, yy - half_N, sigma=10000) *30e18
+zz = LoG(xx - half_N, yy - half_N, sigma=100) *10e9
 # zz = np.where(zz < 0, zz, 1)
 # X1 = np.reshape(X2, -1)
 # Y1 = np.reshape(Y2, -1)

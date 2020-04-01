@@ -1,4 +1,5 @@
 import context
+import yaml
 import numpy as np
 from approximator import Approximator
 import matplotlib.colors as colors 
@@ -9,14 +10,14 @@ import matplotlib.animation as animation
 
 
 ## Create the grid and initial conditions
-initialVals={'x': 10000, 'y': 10000,  'dx':100., 'dy':100 
-                 ,'dt':10. , 'uf': 5., 'time': 1000
-                   ,'yf_start': 40, 'yf_end': 60, 'xf_start': 50, 'xf_end':52, 
-                         'R0': 1.2, 'a1': 1, 'a2': 1, 'a3': 1,  }
+# initialVals={'x': 1000, 'y': 1000,  'dx':10., 'dy':10. 
+#                  ,'dt':1. , 'uf': 2., 'time': 2
+#                    ,'yf_start': 40, 'yf_end': 60, 'xf_start': 50, 'xf_end':52, 
+#                          'R0': 1.2, 'a1': 1., 'a2': .5, 'a3': 1,  }
 
 
 
-coeff = Approximator(initialVals)
+coeff = Approximator("namelist.yaml")
 
 ########################################################################
 
@@ -24,8 +25,10 @@ coeff = Approximator(initialVals)
 
 ########################################################################
 
-plot3D = coeff.plot_3D()
+plot3D = coeff.plot_Ter3D()
 
+# plot3D = coeff.plot_Phi3D()
+# plt.close('all')
 
 ########################################################################
 ########################################################################

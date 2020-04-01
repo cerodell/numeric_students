@@ -1,6 +1,5 @@
 import context
 import noise
-import yaml
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import namedtuple 
@@ -9,7 +8,7 @@ from mpl_toolkits.mplot3d import axes3d
 
 
 
-class Approximator:
+class Approx:
 
     #############################################
     # Initialize condtions
@@ -21,9 +20,7 @@ class Approximator:
         ############################################################
         ############ Initial conditions from dictionary ############
         ############################################################
-        # self.__dict__.update(valueDict)
-        super().__init__(valueDict)
-        self.set_yinit()
+        self.__dict__.update(valueDict)
 
         xshape = int(self.x/self.dx)
         yshape = int(self.y/self.dy)
@@ -54,7 +51,7 @@ class Approximator:
         lin_x = np.linspace(0,self.x,self.shape[0],endpoint=False)
         lin_y = np.linspace(0,self.y,self.shape[1],endpoint=False)
         self.xx,self.yy = np.meshgrid(lin_x,lin_y)
-        self.world = np.abs(world*6000)
+        self.world = world*6000
         ############################################################
 
 
@@ -62,19 +59,19 @@ class Approximator:
         ############## Define the function of phi ##################
         ############################################################
         # phi_ij = np.ones(self.shape)
-        phi_ij = np.random.randint(1,100, size=self.shape)
+        # phi_ij = np.random.randn(100,100)
         # phi_ij = np.ones(self.shape) 
-        phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -np.random.randint(1,100, size=(20,2))
-        self.phi_ij = phi_ij 
-        print(phi_ij[50,50], 'phi_ij Initial')
+        # phi_ij[self.yf_start:self.yf_end, self.xf_start:self.xf_end] = -0.1
+        # self.phi_ij = phi_ij 
+        # print(phi_ij[5,5], 'phi_ij Initial')
 
-        # def LoG(x, y, sigma):
-        #     phi = (x ** 2 + y ** 2) / (2 * sigma ** 2)
-        #     return -1 / (np.pi * sigma ** 4) * (1 - phi) * np.exp(-phi)
+        def LoG(x, y, sigma):
+            phi = (x ** 2 + y ** 2) / (2 * sigma ** 2)
+            return -1 / (np.pi * sigma ** 4) * (1 - phi) * np.exp(-phi)
 
-        # half_N = self.x // 2
-        # zz = -LoG(self.xx - half_N, self.yy - half_N, sigma=100) * 30e10
-        # self.zz = np.where(zz > 0, zz, 0)
+        half_N = self.x // 2
+        zz = -LoG(self.xx - half_N, self.yy - half_N, sigma=100) * 30e10
+        self.zz = np.where(zz > 0, zz, 0)
         ############################################################
 
         return
@@ -91,7 +88,6 @@ class Approximator:
         ----------
         Rf: Fire Rate of Spread (ms^-1)
         R0: Rate of spread in the absence of wind and terrain slope (ms^-1)
-
         uf: Midflame height horizontal wind vector (ms^-1)
         a1, a2, a3: Model coefficient for fuel characteristics defined by Anderson (1982) (?)
         normal = moral graident 
@@ -102,7 +98,6 @@ class Approximator:
         Rf: Fire Rate of Spread
         """
         y, x = 50, 50
-        print(np.max(self.centdif()), "cent diff in fire fun")
         normal = self.centdif() / np.abs(self.centdif())
         # print(normal[y,x], 'normal')
         # print(normal.shape, 'normal shape')
@@ -110,12 +105,12 @@ class Approximator:
         k1 = 1 + self.a1 * np.power((self.uf * normal), self.a2)
         # print(k1[y,x], 'k1')
         k2 = self.a3 * np.power((self.dZ() * normal), 2)
-        # print(k2[y,x], 'k2')
+        print(k2[y,x], 'k2')
         zz =  self.dZ()
-        # print(zz[y,x], 'zz')
+        print(zz[44,73], 'zz')
 
 
-        Rf = -1 * self.R0 * (k1 + k2) * np.abs(self.centdif())
+        Rf = self.R0 * (k1 + k2) * np.abs(self.centdif())
         # Rf = self.R0 * np.abs(self.centdif())
         # print(Rf[y,x], 'Rf')
         # print(np.max(Rf), 'Rf max')
@@ -129,33 +124,26 @@ class Approximator:
     def centdif(self):
         """
         Centered difference spatial approximation
-
         Returns
         -------
         phi_ij: dimensionless
         """
         phi_ij = self.phi_ij
-        print(phi_ij[50,50],"centdif phi start")
 
         k1 = np.roll(phi_ij , -1, axis = (0, 1))
-        print(k1[50,50], "k1 cent")
         k2 = np.roll(np.roll(phi_ij , -1, axis = 1), 1, axis = 0)
-        print(k2[50,50], "k2 cent")
         k3 = np.roll(np.roll(phi_ij , -1, axis = 0), 1, axis = 1)
-        print(k3[50,50], "k3 cent")
         k4 = np.roll(phi_ij , 1, axis = (0, 1))
-        print(k4[50,50], "k4 cent")
 
-        phi_ij = (k1 - k2 - k3 + k4) / (4 * self.dx * self.dy)
+        phi_ij = (k1 - k2 - k3 - k4) / (4 * self.dx * self.dy)
         
-        print(phi_ij[50,50],"centdif phi end")
+        # print(phi_ij[54,50],"centdif phi")
         return phi_ij
 
 
     def dZ(self):
         """
         Centered difference spatial approximation
-
         Returns
         -------
         dZ: gradient of terrain (dz/dx,dz/dy)
@@ -167,7 +155,7 @@ class Approximator:
         k3 = np.roll(np.roll(z , -1, axis = 0), 1, axis = 1)
         k4 = np.roll(z , 1, axis = (0, 1))
 
-        dZ = (k1 - k2 - k3 + k4) / (4 * self.dx * self.dy)
+        dZ = (k1 - k2 - k3 - k4) / (4 * self.dx * self.dy)
         
         # print(z[54,50],"centdif dZ")
         return dZ
@@ -185,33 +173,32 @@ class Approximator:
         Returns
         -------
         phi_n1: next time step of phi_ij
-
         """
         phi_OG = self.phi_ij
 
         phi_n1 = []
-        x, y = 5, 5
-        for n in range(self.nsteps):
-            print(n * self.dt, 'time')
+        x, y = 50, 50
+        for n in range(self.time):
+            print(n, 'time')
             phi_ij = self.phi_ij
-            # print(phi_ij[y,x], "phi_ij var")
+            print(phi_ij[y,x], "phi_ij var")
             phi_str = phi_ij + (self.dt/3) * self.advect_fun()
-            # print(phi_str[y,x], 'phi_str')
+            print(phi_str[y,x], 'phi_str')
 
             self.phi_ij = phi_str
-            # print(self.phi_ij[y,x], 'self phi_ij should be phi_str')
+            print(self.phi_ij[y,x], 'self phi_ij should be phi_str')
 
             phi_str_str  = phi_ij + (self.dt/2) * self.advect_fun()
-            # print(phi_str_str[y,x], 'phi_str_str')
+            print(phi_str_str[y,x], 'phi_str_str')
 
             self.phi_ij = phi_str_str
-            # print(self.phi_ij[y,x], 'self phi_ij should be phi_str_str')
+            print(self.phi_ij[y,x], 'self phi_ij should be phi_str_str')
 
             phi_n  = phi_ij + self.dt * self.advect_fun()
             phi_n = np.array(phi_n)
-            # print(phi_n[y,x], "phi_n pre where")
+            print(phi_n[y,x], "phi_n pre where")
             
-            # phi_n = np.where(phi_n < 0, phi_n, -.1)
+            phi_n = np.where(phi_n < 0, phi_n, -0.1)
             # print(phi_n[y,x], "phi_n post where")
 
             # phi_n = np.where(phi_n < 0, phi_n, 1)
@@ -259,13 +246,12 @@ class Approximator:
         ## Phi 3D Plot
         ################################        
         """
-        rk3 = self.rk3()
         # plane1 = np.ones(self.shape) * 45
         # plane = self.phi_ij * 45
         fig = plt.figure(figsize=(12,6))
         fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
-        ter = ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='Reds', zorder = 10)
+        ter = ax.plot_surface(self.xx,self.yy, self.zz,cmap='r', zorder = 10)
         # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
         # ax.plot_surface(self.xx,self.yy, plane1 ,cmap='Reds_r', alpha = .8, zorder = 1)
 
@@ -320,10 +306,3 @@ class Approximator:
         # plt.show()
 
         return
-
-
-
-
-
-
-

@@ -1,0 +1,17 @@
+timevars:
+  dt: 0.1
+  nsteps: 2.0
+spatialvars:
+  x: 1000
+  y: 1000
+  dx: 10
+  dy: 10
+uservars:
+  xf_start: 50
+  xf_end: 52
+  yf_start: 40
+  yf_end: 60
+  R0: 1.2
+  a1: 1.
+  a2: 0.5
+  a3: 1.

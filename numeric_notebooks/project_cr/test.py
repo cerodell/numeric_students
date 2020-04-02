@@ -3,6 +3,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 
+x, y = 10000, 10000
+shape = (100,100)
+lin_x = np.linspace(0,x,shape[0],endpoint=False)
+lin_y = np.linspace(0,y,shape[1],endpoint=False)
+xx,yy = np.meshgrid(lin_x,lin_y)
+
+test = np.random.randint(1,10, size=shape)
+
+def LoG(x, y, sigma):
+    temp = (x ** 2 + y ** 2) / (2 * sigma ** 2)
+    return -1 / (np.pi * sigma ** 4) * (1 - temp) * np.exp(-temp)
+
+half_N = x // 2
+zz = LoG(xx - half_N, yy - half_N, sigma=20000) *10e18
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection="3d")
+ax.plot_surface(xx, yy, -zz, cmap='coolwarm')
+plt.show()
+
+
 
 # A = np.array([[1, 2, 6, 7], [3, 4, 5, 2], [1,4, 8, 12], [13, 5, 7, 14]])
 # dA = np.gradient(A)
@@ -21,9 +42,9 @@ from mpl_toolkits.mplot3d import axes3d
 # print(dBcr)
 # timer = np.arange(10)
 
-shape = (100,100)
+# shape = (100,100)
 
-test = np.random.randint(1,10, size=shape)
+# test = np.random.randint(1,10, size=shape)
 # scale = 100.0
 # octaves = 6
 # persistence = 0.4
@@ -41,9 +62,9 @@ test = np.random.randint(1,10, size=shape)
 #                                     repeaty=1024, 
 #                                     base=42)
 
-lin_x = np.linspace(0,10000,shape[0],endpoint=False)
-lin_y = np.linspace(0,10000,shape[1],endpoint=False)
-xx,yy = np.meshgrid(lin_x,lin_y)
+# lin_x = np.linspace(0,10000,shape[0],endpoint=False)
+# lin_y = np.linspace(0,10000,shape[1],endpoint=False)
+# xx,yy = np.meshgrid(lin_x,lin_y)
 # worldcr = np.abs(world*500-2)
 
 # print(worldcr.shape)
@@ -52,25 +73,6 @@ xx,yy = np.meshgrid(lin_x,lin_y)
 
 
 
-def LoG(x, y, sigma):
-    temp = (x ** 2 + y ** 2) / (2 * sigma ** 2)
-    return -1 / (np.pi * sigma ** 4) * (1 - temp) * np.exp(-temp)
-
-# N = 100
-half_N = 10000 // 2
-# X2, Y2 = np.meshgrid(range(N), range(N))
-
-# Z2 = -LoG(xx - half_N, yy - half_N, sigma=1000) *10000000000000000
-zz = LoG(xx - half_N, yy - half_N, sigma=100) *10e9
-# zz = np.where(zz < 0, zz, 1)
-# X1 = np.reshape(X2, -1)
-# Y1 = np.reshape(Y2, -1)
-# Z1 = np.reshape(Z2, -1)
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection="3d")
-ax.plot_surface(xx, yy, zz, color='r')
-plt.show()
 # 
 # 
 # 

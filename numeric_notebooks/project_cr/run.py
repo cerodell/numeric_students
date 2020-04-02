@@ -8,16 +8,16 @@ import matplotlib.animation as animation
 
 
 coeff = Approximator("namelist.yaml")
-
+nsteps = coeff.timevars.nsteps
 ########################################################################
-# 
-# plot2D = coeff.plot_main()
+
+plot2D = coeff.plot_main()
 
 ########################################################################
 
 # plot3D = coeff.plot_Ter3D()
-
-plot3D = coeff.plot_Phi3D()
+# 
+# plot3D = coeff.plot_Phi3D()
 # plt.close('all')
 
 ########################################################################
@@ -33,7 +33,7 @@ plot3D = coeff.plot_Phi3D()
 
 #        ax.set_title('%03d'%(i)) 
 # interval = 0.01#in seconds     
-# ani = animation.FuncAnimation(fig,animate,coeff.timevars.nsteps,interval=interval*1e+3,blit=False)
+# ani = animation.FuncAnimation(fig,animate,nsteps,interval= 10 ,blit=False)
 # plt.show()
 # ani.save('/Users/rodell/Desktop/fire_fail3.mp4', fps=30)
 

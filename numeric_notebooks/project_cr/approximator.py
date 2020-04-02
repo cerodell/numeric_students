@@ -18,7 +18,7 @@ class Approximator:
         """
         Create the grid and initial conditions
         """
-        self.yloc, self.xloc = 5, 5
+        self.yloc, self.xloc = 50, 50
 
         ############################################################
         ######### Initial conditions from namelist.yaml ############
@@ -75,13 +75,13 @@ class Approximator:
         ############################################################
         ############## Define the function of phi ##################
         ############################################################
-        # phi_ij = np.ones(self.shape)
-        phi_ij = np.random.randint(1,20, size=self.shape)
+        phi_ij = np.ones(self.shape)
+        # phi_ij = np.random.randint(1,20, size=self.shape)
 
         xf_start, xf_end, yf_start, yf_end = self.fire
         yfshape, xfshape = int(abs(yf_start-yf_end)), int(abs(xf_start-xf_end))
 
-        phi_ij[yf_start:yf_end, xf_start:xf_end] = -np.random.randint(1,20, size=(yfshape,xfshape))
+        phi_ij[yf_start:yf_end, xf_start:xf_end] = -3 
         
         self.phi_ij = phi_ij 
         print(phi_ij[self.yloc,self.xloc], 'phi_ij Initial')
@@ -161,16 +161,16 @@ class Approximator:
         print(k1[self.yloc,self.xloc], "k1 cent")
 
         k2 = np.roll(np.roll(phi_ij , -1, axis = 1), 1, axis = 0)
-        # print(k2[self.yloc,self.xloc], "k2 cent")
+        print(k2[self.yloc,self.xloc], "k2 cent")
 
         k3 = np.roll(np.roll(phi_ij , -1, axis = 0), 1, axis = 1)
-        # print(k3[self.yloc,self.xloc], "k3 cent")
+        print(k3[self.yloc,self.xloc], "k3 cent")
 
         k4 = np.roll(phi_ij , 1, axis = (0, 1))
-        # print(k4[self.yloc,self.xloc], "k4 cent")
+        print(k4[self.yloc,self.xloc], "k4 cent")
 
-        # phi_ij = (k1 - k2 - k3 + k4) / (4 * dx * dy)
-        phi_ij = k1 / (2 * dx)
+        phi_ij = (k1 - k2 - k3 - k4) / (4 * dx * dy)
+        # phi_ij = k1 - k4 / (2 * dx)
 
         print(phi_ij[self.yloc,self.xloc],"centdif phi end")
         
@@ -192,12 +192,12 @@ class Approximator:
         # print(z[self.yloc,self.xloc],"z pre centdiff")
 
         k1 = np.roll(z , -1, axis = (0, 1))
-        # k2 = np.roll(np.roll(z , -1, axis = 1), 1, axis = 0)
-        # k3 = np.roll(np.roll(z , -1, axis = 0), 1, axis = 1)
-        # k4 = np.roll(z , 1, axis = (0, 1))
+        k2 = np.roll(np.roll(z , -1, axis = 1), 1, axis = 0)
+        k3 = np.roll(np.roll(z , -1, axis = 0), 1, axis = 1)
+        k4 = np.roll(z , 1, axis = (0, 1))
 
-        # dZ = (k1 - k2 - k3 + k4) / (4 * dx * dy) 
-        dZ = k1 / (2 * dx)
+        dZ = (k1 - k2 - k3 - k4) / (4 * dx * dy) 
+        # dZ = k1 / (2 * dx)
 
         # print(dZ[self.yloc,self.xloc],"centdif dZ")
 
@@ -242,8 +242,14 @@ class Approximator:
             phi_n = np.array(phi_n)
             print(phi_n[self.yloc,self.xloc], "phi_n pre where")
             
-            # phi_n = np.where(phi_n < 0, phi_n, -.1)
-            # print(phi_n[self.yloc,self.xloc], "phi_n post where")
+            # random = np.random.randint(1,20, size=self.shape)
+            random = np.random.uniform(low=3., high=13.3, size=(1,))
+            phi_n = np.where(phi_n > 0, phi_n, -random)
+            print(phi_n[self.yloc,self.xloc], "phi_n post where")
+            random2  = np.random.uniform(low=3., high=13.3, size=(1,))
+            phi_n = np.where(phi_n < 10, phi_n, random2)
+            print(phi_n[self.yloc,self.xloc], "phi_n post post where")
+
 
             phi_n1.append(phi_n)
             self.phi_ij = phi_n
@@ -311,9 +317,9 @@ class Approximator:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
         level = np.arange(np.min(self.world),np.max(self.world),1)
-        fire = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds')
+        fire = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds', levels = 0)
         ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder = 1)
-        fig.colorbar(fire, shrink=0.5, aspect=5)
+        # fig.colorbar(fire, shrink=0.5, aspect=5)
 
         ax.set_xlabel('Distance (X: m)', fontsize = 14)
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)

@@ -1,6 +1,6 @@
 timevars:
-  dt: 0.01
-  nsteps: 2000
+  dt: 10
+  nsteps: 500
 spatialvars:
   x: 10000
   y: 10000
@@ -12,8 +12,8 @@ fire:
   yf_start: 40
   yf_end: 60
 firecoeff:
-  uf: 5.
-  R0: 1.2
+  uf: 10.
+  R0: 4.2
   a1: 1.
   a2: 1
   a3: 1.

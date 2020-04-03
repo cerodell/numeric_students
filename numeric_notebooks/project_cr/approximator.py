@@ -30,7 +30,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 class Approximator:
     """
-    A class used to fire simualtion using the level set method
+    A class used to model wildland fire rate of spread using the level set method
 
     ...
 
@@ -54,7 +54,7 @@ class Approximator:
         Centered difference spatial approximation for terrain
 
     rk3()
-        Runge-Kutta 3rd order Centred in Space
+        3rd order Runge-Kutta
 
     plot_Ter3D()
         Terrain 3D Plot
@@ -77,7 +77,7 @@ class Approximator:
     #############################################
     def __init__(self, namelist):
         """
-        Create the grid and initial conditions
+        Create the domain and apply initial conditions
         """
         ## yloc and xloc are used from print statments thoughout this class
         self.yloc, self.xloc = 50, 50
@@ -138,10 +138,9 @@ class Approximator:
         ############## Define the function of phi ##################
         ############################################################
         phi_ij = np.ones(self.shape)
-        # phi_ij = np.random.randint(1,20, size=self.shape)
 
         xf_start, xf_end, yf_start, yf_end = self.fire
-        yfshape, xfshape = int(abs(yf_start-yf_end)), int(abs(xf_start-xf_end))
+        # yfshape, xfshape = int(abs(yf_start-yf_end)), int(abs(xf_start-xf_end))
 
         phi_ij[yf_start:yf_end, xf_start:xf_end] = -3 
         
@@ -191,8 +190,8 @@ class Approximator:
 
         delta_phi = self.centdif()
         delta_z = self.dZ()
-
         # print(np.max(delta_phi), "cent diff in fire fun")
+       
         normal = delta_phi / np.abs(delta_phi)
         # print(normal[self.yloc,self.xloc], 'normal')
 
@@ -276,7 +275,7 @@ class Approximator:
     #############################################
     def rk3(self):
         """
-        Runge-Kutta 3rd order Centred in Space
+        3rd order Runge-Kutta
         
         Returns
         -------

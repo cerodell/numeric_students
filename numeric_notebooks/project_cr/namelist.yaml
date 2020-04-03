@@ -1,6 +1,6 @@
 timevars:
   dt: 10
-  nsteps: 500
+  nsteps: 1500
 spatialvars:
   x: 10000
   y: 10000

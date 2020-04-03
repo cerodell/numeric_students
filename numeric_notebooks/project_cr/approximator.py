@@ -1,3 +1,20 @@
+'''
+    File name: approximator.py
+    Author: Christopher Rodell
+    Date created: 3/27/2020
+    Python Version: 3.7.6
+    ------
+    IMPORTANT: Ensure you working dirctiory has context.py within it.
+    
+    Essesntial packadges
+
+    noise: used to generate terrain
+    import noise
+    https://anaconda.org/conda-forge/noise
+    conda install -c conda-forge noise
+
+'''
+
 import context
 
 import noise
@@ -7,9 +24,53 @@ from context import this_dir
 import matplotlib.pyplot as plt
 from collections import namedtuple 
 from mpl_toolkits.mplot3d import axes3d
+import matplotlib.animation as animation
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 class Approximator:
+    """
+    A class used to fire simualtion using the level set method
+
+    ...
+
+    Attributes
+    ----------
+    namelist : yaml
+        a yaml file containing initial condition and domain set up 
+
+    Methods
+    -------
+    reinitialize()
+        Reinitialize ensure phi doesnt blow up, as recommend from Munoz-Esparza et al.
+    
+    advect_fun()
+        Fire rate of spread, Rf, parameteriziation defiend by Rothermel (1972)
+    
+    centdif()
+        Centered difference spatial approximation for phi
+
+    dZ()
+        Centered difference spatial approximation for terrain
+
+    rk3()
+        Runge-Kutta 3rd order Centred in Space
+
+    plot_Ter3D()
+        Terrain 3D Plot
+
+    plot_Phi3D()
+        Phi 3D Plot
+
+    plot_main()
+        Fire line overlayed on Terrain contourf Plot
+
+    plot_main_animate()
+        Fire line overlayed on Terrain contourf Plot animated
+   
+    plot_test()
+        Play Plot fucntion
+    """
 
     #############################################
     # Initialize condtions
@@ -18,6 +79,7 @@ class Approximator:
         """
         Create the grid and initial conditions
         """
+        ## yloc and xloc are used from print statments thoughout this class
         self.yloc, self.xloc = 50, 50
 
         ############################################################
@@ -84,19 +146,25 @@ class Approximator:
         phi_ij[yf_start:yf_end, xf_start:xf_end] = -3 
         
         self.phi_ij = phi_ij 
-        print(phi_ij[self.yloc,self.xloc], 'phi_ij Initial')
-
-        # def LoG(x, y, sigma):
-        #     phi = (x ** 2 + y ** 2) / (2 * sigma ** 2)
-        #     return -1 / (np.pi * sigma ** 4) * (1 - phi) * np.exp(-phi)
-
-        # half_N = self.spatialvars.x // 2
-        # phi_ij = -LoG(self.xx - half_N, self.yy - half_N, sigma=2000) * 10e12
-        # self.phi_ij = phi_ij
+        # print(phi_ij[self.yloc,self.xloc], 'phi_ij Initial')
         ############################################################
 
         return
 
+    def reinitialize(self,phi):
+        """
+        Reinitialize ensure phi doesnt blow up, as recommend from Munoz-Esparza et al.
+        """
+
+        random = np.random.uniform(low=3., high=13.3, size=(1,))
+        phi_n = np.where(phi > 0, phi, -random)
+        # print(phi_n[self.yloc,self.xloc], "phi_n post where")
+
+        random2  = np.random.uniform(low=3., high=13.3, size=(1,))
+        phi_n = np.where(phi_n < 10, phi_n, random2)
+        # print(phi_n[self.yloc,self.xloc], "phi_n post post where")
+
+        return phi_n
 
     #############################################
     ############# Advection Function ############
@@ -155,24 +223,22 @@ class Approximator:
         x, y, dx, dy = self.spatialvars
 
         phi_ij = self.phi_ij
-        print(phi_ij[self.yloc,self.xloc],"centdif phi start")
+        # print(phi_ij[self.yloc,self.xloc],"centdif phi start")
 
         k1 = np.roll(phi_ij , -1, axis = (0, 1))
-        print(k1[self.yloc,self.xloc], "k1 cent")
+        # print(k1[self.yloc,self.xloc], "k1 cent")
 
         k2 = np.roll(np.roll(phi_ij , -1, axis = 1), 1, axis = 0)
-        print(k2[self.yloc,self.xloc], "k2 cent")
+        # print(k2[self.yloc,self.xloc], "k2 cent")
 
         k3 = np.roll(np.roll(phi_ij , -1, axis = 0), 1, axis = 1)
-        print(k3[self.yloc,self.xloc], "k3 cent")
+        # print(k3[self.yloc,self.xloc], "k3 cent")
 
         k4 = np.roll(phi_ij , 1, axis = (0, 1))
-        print(k4[self.yloc,self.xloc], "k4 cent")
+        # print(k4[self.yloc,self.xloc], "k4 cent")
 
         phi_ij = (k1 - k2 - k3 - k4) / (4 * dx * dy)
-        # phi_ij = k1 - k4 / (2 * dx)
-
-        print(phi_ij[self.yloc,self.xloc],"centdif phi end")
+        # print(phi_ij[self.yloc,self.xloc],"centdif phi end")
         
         return phi_ij
 
@@ -192,13 +258,14 @@ class Approximator:
         # print(z[self.yloc,self.xloc],"z pre centdiff")
 
         k1 = np.roll(z , -1, axis = (0, 1))
+
         k2 = np.roll(np.roll(z , -1, axis = 1), 1, axis = 0)
+
         k3 = np.roll(np.roll(z , -1, axis = 0), 1, axis = 1)
+
         k4 = np.roll(z , 1, axis = (0, 1))
 
         dZ = (k1 - k2 - k3 - k4) / (4 * dx * dy) 
-        # dZ = k1 / (2 * dx)
-
         # print(dZ[self.yloc,self.xloc],"centdif dZ")
 
         return dZ
@@ -222,42 +289,38 @@ class Approximator:
         phi_n1 = []
 
         for n in range(nsteps):
-            print(n * dt, 'time')
+            self.time = n * dt
+            print(self.time, 'time (seconds)')
             phi_ij = self.phi_ij
-            print(phi_ij[self.yloc,self.xloc], "phi_ij var")
+            # print(phi_ij[self.yloc,self.xloc], "phi_ij var")
 
             phi_str = phi_ij - (dt/3) * self.advect_fun()
-            print(phi_str[self.yloc,self.xloc], 'phi_str')
+            # print(phi_str[self.yloc,self.xloc], 'phi_str')
 
             self.phi_ij = phi_str
-            print(self.phi_ij[self.yloc,self.xloc], 'self phi_ij should be phi_str')
+            # print(self.phi_ij[self.yloc,self.xloc], 'self phi_ij should be phi_str')
 
             phi_str_str  = phi_ij - (dt/2) * self.advect_fun()
-            print(phi_str_str[self.yloc,self.xloc], 'phi_str_str')
+            # print(phi_str_str[self.yloc,self.xloc], 'phi_str_str')
 
             self.phi_ij = phi_str_str
-            print(self.phi_ij[self.yloc,self.xloc], 'self phi_ij should be phi_str_str')
+            # print(self.phi_ij[self.yloc,self.xloc], 'self phi_ij should be phi_str_str')
 
             phi_n  = phi_ij - dt * self.advect_fun()
             phi_n = np.array(phi_n)
-            print(phi_n[self.yloc,self.xloc], "phi_n pre where")
-            
-            # random = np.random.randint(1,20, size=self.shape)
-            random = np.random.uniform(low=3., high=13.3, size=(1,))
-            phi_n = np.where(phi_n > 0, phi_n, -random)
-            print(phi_n[self.yloc,self.xloc], "phi_n post where")
-            random2  = np.random.uniform(low=3., high=13.3, size=(1,))
-            phi_n = np.where(phi_n < 10, phi_n, random2)
-            print(phi_n[self.yloc,self.xloc], "phi_n post post where")
+            # print(phi_n[self.yloc,self.xloc], "phi_n pre where")
 
+            ## THIS IS VERY IMPORTANT!!!!!!!!!!
+            ## Reinitialize phi to ensure the model doesnt expoled!
+            phi_n = self.reinitialize(phi_n)
 
             phi_n1.append(phi_n)
             self.phi_ij = phi_n
 
         phi_n1 = np.stack(phi_n1)
         print(phi_n1.shape, "Phi Final Shape n,j,i (time,y,x)")
+        
         self.phi_ij = phi_OG
-
         return phi_n1
 
 
@@ -268,14 +331,12 @@ class Approximator:
         """
         Terrain 3D Plot     
         """
-        plane1 = np.ones(self.shape) * 45
-        # plane = self.phi_ij * 45
+        plane = self.phi_ij * 45
         fig = plt.figure(figsize=(12,6))
         fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
         ter = ax.plot_surface(self.xx,self.yy, self.world,cmap='terrain', zorder = 10)
-        # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
-        ax.plot_surface(self.xx,self.yy, plane1 ,cmap='Reds_r', alpha = .8, zorder = 1)
+        ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
 
         ax.set_xlabel('Distance (X: m)', fontsize = 14)
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)
@@ -290,19 +351,16 @@ class Approximator:
         Phi 3D Plot
         """
         rk3 = self.rk3()
-        # plane1 = np.ones(self.shape) * 45
-        # plane = self.phi_ij * 45
+
         fig = plt.figure(figsize=(12,6))
         fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
-        ter = ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='Reds', zorder = 10)
-        # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
-        # ax.plot_surface(self.xx,self.yy, plane1 ,cmap='Reds_r', alpha = .8, zorder = 1)
+        phi = ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='Reds', zorder = 10)
 
         ax.set_xlabel('Distance (X: m)', fontsize = 14)
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)
         ax.set_zlabel('Height (Z: m)', fontsize = 14)
-        fig.colorbar(ter, shrink=0.5, aspect=5)
+        fig.colorbar(phi, shrink=0.5, aspect=5)
         plt.show()
 
         return
@@ -312,21 +370,68 @@ class Approximator:
         """
         Fire line overlayed on Terrain contourf Plot
         """
-
+        fire_level = 0
         rk3 = self.rk3()
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
+        ax.set_title("Run Time: Seconds:  " + str(self.time) , fontsize= 8)
         level = np.arange(np.min(self.world),np.max(self.world),1)
-        fire = ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, cmap ='Reds', levels = 0)
-        ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder = 1)
-        # fig.colorbar(fire, shrink=0.5, aspect=5)
-
-        ax.set_xlabel('Distance (X: m)', fontsize = 14)
-        ax.set_ylabel('Distance (Y: m)', fontsize = 14)
+        fire = [plt.Rectangle((0,0),1,1, fc = "red")]  
+        ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, colors='red', levels = fire_level, linewidths = 2.5)
+        ter = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder = 1)
+        
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+        clb = plt.colorbar(ter, cax=cax)
+        clb.set_label('Elevation (Z: meters)', fontsize = 12)
+        clb.ax.tick_params(labelsize=12) 
+        clb.set_alpha(.75)
+        clb.draw_all()
+        
+        ax.legend(fire, ["Fire Line"])
+        ax.set_xlabel('Distance (X: meters)', fontsize = 14)
+        ax.set_ylabel('Distance (Y: mmeters)', fontsize = 14)
         plt.show()
 
         return
 
+    def plot_main_animate(self):
+        """
+        Fire line overlayed on Terrain contourf Plot
+        """
+        nsteps = self.timevars.nsteps
+        dt = self.timevars.dt
+        fire_level = 0
+        rk3 = self.rk3()
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+        fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
+        level = np.arange(np.min(self.world),np.max(self.world),1)
+        fire = [plt.Rectangle((0,0),1,1, fc = "red")]  
+        ter = ax.contourf(self.xx,self.yy, self.world,cmap='terrain', levels = level, zorder = 1)
+
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+        clb = plt.colorbar(ter, cax=cax)
+        clb.set_label('Elevation (Z: meters)', fontsize = 12)
+        clb.ax.tick_params(labelsize=12) 
+        clb.set_alpha(.75)
+        clb.draw_all()          
+        ax.legend(fire, ["Fire Line"])
+        ax.set_xlabel('Distance (X: meters)', fontsize = 14)
+        ax.set_ylabel('Distance (Y: mmeters)', fontsize = 14)
+
+        ax2 = ax.twinx()
+        def animate(i):
+            ax2.clear()
+            ax2.set_title("Run Time: Seconds:  " + '%03d'%(i * dt ), fontsize= 8)
+            ax2.contour(self.xx,self.yy, rk3[i,:,:], zorder =10, colors='red', levels = fire_level, linewidths = 2.5)
+            ax2.set_yticklabels([])
+
+        ani = animation.FuncAnimation(fig,animate,nsteps,interval= 100 ,blit=False)
+        plt.show()
+
+        # plt.close('all')
+        # ani.save( str(this_dir) + 'fire.mp4', fps=30)
 
     def plot_test(self):
         """

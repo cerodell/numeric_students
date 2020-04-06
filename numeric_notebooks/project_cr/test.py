@@ -21,7 +21,7 @@ zz = LoG(xx - half_N, yy - half_N, sigma=20000) *10e18
 fig = plt.figure()
 ax = fig.add_subplot(111, projection="3d")
 ax.plot_surface(xx, yy, -zz, cmap='coolwarm')
-plt.show()
+# plt.show()
 
 
 

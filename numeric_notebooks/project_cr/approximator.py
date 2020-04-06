@@ -17,6 +17,7 @@
 
 import context
 
+import sys
 import noise
 import yaml
 import numpy as np
@@ -95,6 +96,9 @@ class Approximator:
         spatialvars = namedtuple('spatialvars', config['spatialvars'].keys())
         self.spatialvars = spatialvars(**config['spatialvars'])
 
+        terrain = namedtuple('terrain', config['terrain'].keys())
+        self.terrain = terrain(**config['terrain'])
+
         fire = namedtuple('fire', config['fire'].keys())
         self.fire = fire(**config['fire'])
 
@@ -105,6 +109,8 @@ class Approximator:
         yshape = int(self.spatialvars.y/self.spatialvars.dy)
         self.shape = (xshape, yshape)
         print(self.shape, "Domain Shape")
+
+
         ############################################################
 
 
@@ -112,9 +118,9 @@ class Approximator:
         ############## Define the terrian aka world ################
         ############################################################
         scale = self.shape[0]
-        octaves = 6
-        persistence = 0.4
-        lacunarity = 2.0
+        octaves = self.terrain.octaves
+        persistence = self.terrain.persistence
+        lacunarity = self.terrain.lacunarity
         world = np.zeros(self.shape)
         for i in range(self.shape[0]):
             for j in range(self.shape[1]):
@@ -150,6 +156,11 @@ class Approximator:
 
         return
 
+    def cfl(self,Rf):
+        cfl = (np.max(Rf) * self.timevars.dt) / self.spatialvars.dx
+        return cfl
+
+
     def reinitialize(self,phi):
         """
         Reinitialize ensure phi doesnt blow up, as recommend from Munoz-Esparza et al.
@@ -179,7 +190,7 @@ class Approximator:
 
         uf: Midflame height horizontal wind vector (ms^-1)
         a1, a2, a3: Model coefficient for fuel characteristics defined by Anderson (1982) (?)
-        normal = moral graident 
+        normal = normal graident 
         k1, k2: Rf broken down into parts
         
         Returns
@@ -201,10 +212,15 @@ class Approximator:
         k2 = a3 * np.power((delta_z * normal), 2)
         # print(k2[self.yloc,self.xloc], 'k2')
 
-        Rf = R0 * (k1 + k2) * np.abs(delta_phi)
+        Rf = R0 * (1 + k1 + k2) * np.abs(delta_phi)
         # print(Rf[self.yloc,self.xloc], 'Rf')
         # print(np.max(Rf), 'Rf max')
-
+        cfl = self.cfl(Rf)
+        if cfl > 1.74:
+            sys.exit("ERROR! CFL condition has been compromised")
+        else:
+            pass
+        # print(cfl, "Courant–Friedrichs–Lewy condition")
         return Rf
 
     
@@ -330,12 +346,13 @@ class Approximator:
         """
         Terrain 3D Plot     
         """
-        plane = self.phi_ij * 45
+        plane = self.phi_ij * 450
+        plane = np.where(plane>0, plane , -45)
         fig = plt.figure(figsize=(12,6))
-        fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
+        fig.suptitle("Surface Function $\Phi_{i,j}$ \n overlaid on Terrain", fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
         ter = ax.plot_surface(self.xx,self.yy, self.world,cmap='terrain', zorder = 10)
-        ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
+        # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
 
         ax.set_xlabel('Distance (X: m)', fontsize = 14)
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)
@@ -349,16 +366,20 @@ class Approximator:
         """
         Phi 3D Plot
         """
+        plane = self.phi_ij * 0
+        nsteps = self.timevars.nsteps
         rk3 = self.rk3()
-
         fig = plt.figure(figsize=(12,6))
-        fig.suptitle("Surface Function", fontsize= 16, fontweight="bold")
+        fig.suptitle("Surface Function $\Phi_{i,j}$ at n =  " + str(nsteps), fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
-        phi = ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='Reds', zorder = 10)
+        ax.plot_surface(self.xx,self.yy, plane ,cmap='Greys_r', alpha = 1., zorder = 10)
+        phi = ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='Reds',alpha = .6, zorder = 1)
+
 
         ax.set_xlabel('Distance (X: m)', fontsize = 14)
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)
         ax.set_zlabel('Height (Z: m)', fontsize = 14)
+        ax.set_zlim(-10,10)
         fig.colorbar(phi, shrink=0.5, aspect=5)
         plt.show()
 

@@ -26,7 +26,7 @@ plot_main = coeff.plot_main()
 """ #### Fire line overlayed on Terrain contourf Plot animated ##### """
 ########################################################################
 
-# plot_animation = coeff.plot_main_animate()
+plot_animation = coeff.plot_main_animate()
 
 ########################################################################
 """ ##################### Terrain 3D Plot ######################### """

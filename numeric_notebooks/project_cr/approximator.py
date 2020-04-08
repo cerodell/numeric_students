@@ -135,8 +135,13 @@ class Approximator:
 
         lin_x = np.linspace(0,self.spatialvars.x,self.shape[0],endpoint=False)
         lin_y = np.linspace(0,self.spatialvars.y,self.shape[1],endpoint=False)
-        self.xx,self.yy = np.meshgrid(lin_x,lin_y)
+        xx,yy = np.meshgrid(lin_x,lin_y)
+        self.xx,self.yy = xx.T, yy.T
+        print(self.xx.shape, "Shape XX")
+        print(self.yy.shape, "Shape YY")
+
         self.world = np.abs(world*6000)
+        print(self.world.shape, "Terrain Shape")
         ############################################################
 
 
@@ -148,7 +153,7 @@ class Approximator:
         xf_start, xf_end, yf_start, yf_end = self.fire
         # yfshape, xfshape = int(abs(yf_start-yf_end)), int(abs(xf_start-xf_end))
 
-        phi_ij[yf_start:yf_end, xf_start:xf_end] = -3 
+        phi_ij[xf_start:xf_end, yf_start:yf_end] = -3 
         
         self.phi_ij = phi_ij 
         # print(phi_ij[self.yloc,self.xloc], 'phi_ij Initial')
@@ -157,8 +162,10 @@ class Approximator:
         return
 
     def cfl(self,Rf):
-        cfl = (np.max(Rf) * self.timevars.dt) / self.spatialvars.dx
-        return cfl
+        cflx = (np.max(Rf) * self.timevars.dt) / self.spatialvars.dx
+        cfly = (np.max(Rf) * self.timevars.dt) / self.spatialvars.dy
+        cfl = cflx + cfly
+        return cflx, cfly, cfl
 
 
     def reinitialize(self,phi):
@@ -167,11 +174,13 @@ class Approximator:
         """
 
         random = np.random.uniform(low=3., high=13.3, size=(1,))
+        # random = np.random.uniform(low=.1, high=1.3, size=(1,))
         phi_n = np.where(phi > 0, phi, -random)
         # print(phi_n[self.yloc,self.xloc], "phi_n post where")
 
         random2  = np.random.uniform(low=3., high=13.3, size=(1,))
-        phi_n = np.where(phi_n < 10, phi_n, random2)
+        # random2  = np.random.uniform(low=.0001, high=1.3, size=(1,))
+        phi_n = np.where(phi_n < 10, phi_n, random2) ## < 10
         # print(phi_n[self.yloc,self.xloc], "phi_n post post where")
 
         return phi_n
@@ -215,12 +224,20 @@ class Approximator:
         Rf = R0 * (1 + k1 + k2) * np.abs(delta_phi)
         # print(Rf[self.yloc,self.xloc], 'Rf')
         # print(np.max(Rf), 'Rf max')
-        cfl = self.cfl(Rf)
-        if cfl > 1.74:
+        cflx, cfly, cfl = self.cfl(Rf)
+
+        if cflx > 1.74:
+            print(f"CFL of {cflx}")
+            sys.exit("ERROR! CFL condition has been compromised")
+        elif cfly > 1.74:
+            print(f"CFL of {cfly}")
+            sys.exit("ERROR! CFL condition has been compromised")
+        elif cflx < -1e-10:
+            print(f"CFL of {cflx}")
             sys.exit("ERROR! CFL condition has been compromised")
         else:
             pass
-        # print(cfl, "Courant–Friedrichs–Lewy condition")
+        # print(cflx, "Courant–Friedrichs–Lewy condition")
         return Rf
 
     
@@ -333,7 +350,8 @@ class Approximator:
             self.phi_ij = phi_n
 
         phi_n1 = np.stack(phi_n1)
-        print(phi_n1.shape, "Phi Final Shape n,j,i (time,y,x)")
+        # phi_n1 = phi_n1.T
+        print(phi_n1.shape, "Phi Final Shape n,i,j (time,x,y)")
         
         self.phi_ij = phi_OG
         return phi_n1
@@ -349,7 +367,7 @@ class Approximator:
         plane = self.phi_ij * 450
         plane = np.where(plane>0, plane , -45)
         fig = plt.figure(figsize=(12,6))
-        fig.suptitle("Surface Function $\Phi_{i,j}$ \n overlaid on Terrain", fontsize= 16, fontweight="bold")
+        fig.suptitle("Terrain", fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
         ter = ax.plot_surface(self.xx,self.yy, self.world,cmap='terrain', zorder = 10)
         # ax.plot_surface(self.xx,self.yy, plane ,cmap='Reds', alpha = .8, zorder = 1)
@@ -370,7 +388,7 @@ class Approximator:
         nsteps = self.timevars.nsteps
         rk3 = self.rk3()
         fig = plt.figure(figsize=(12,6))
-        fig.suptitle("Surface Function $\Phi_{i,j}$ at n =  " + str(nsteps), fontsize= 16, fontweight="bold")
+        fig.suptitle("Surface Function $\Phi_{i,j}$   Time (Seconds): " + str(self.time), fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
         ax.plot_surface(self.xx,self.yy, plane ,cmap='Greys_r', alpha = 1., zorder = 10)
         phi = ax.plot_surface(self.xx,self.yy, rk3[-1,:,:],cmap='Reds',alpha = .6, zorder = 1)
@@ -380,7 +398,7 @@ class Approximator:
         ax.set_ylabel('Distance (Y: m)', fontsize = 14)
         ax.set_zlabel('Height (Z: m)', fontsize = 14)
         ax.set_zlim(-10,10)
-        fig.colorbar(phi, shrink=0.5, aspect=5)
+        # fig.colorbar(phi, shrink=0.5, aspect=5)
         plt.show()
 
         return
@@ -394,7 +412,7 @@ class Approximator:
         rk3 = self.rk3()
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
-        ax.set_title("Run Time: Seconds:  " + str(self.time) , fontsize= 8)
+        ax.set_title("Run Time (Seconds):  " + str(self.time) , fontsize= 12)
         level = np.arange(np.min(self.world),np.max(self.world),1)
         fire = [plt.Rectangle((0,0),1,1, fc = "red")]  
         ax.contour(self.xx,self.yy, rk3[-1,:,:], zorder =10, colors='red', levels = fire_level, linewidths = 2.5)
@@ -403,7 +421,7 @@ class Approximator:
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         clb = plt.colorbar(ter, cax=cax)
-        clb.set_label('Elevation (Z: meters)', fontsize = 12)
+        clb.set_label('Height (Z: meters)', fontsize = 12)
         clb.ax.tick_params(labelsize=12) 
         clb.set_alpha(.75)
         clb.draw_all()
@@ -412,6 +430,8 @@ class Approximator:
         ax.set_xlabel('Distance (X: meters)', fontsize = 14)
         ax.set_ylabel('Distance (Y: mmeters)', fontsize = 14)
         plt.show()
+        save_name = "dxy_" + str(self.spatialvars.dx) + "_dt_" + str(self.timevars.dt) + "_n_" + str(self.timevars.nsteps)
+        fig.savefig(str(this_dir) + "/Images/F_" + save_name)
 
         return
 

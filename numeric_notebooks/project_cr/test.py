@@ -3,24 +3,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 
-x, y = 10000, 10000
-shape = (100,100)
-lin_x = np.linspace(0,x,shape[0],endpoint=False)
-lin_y = np.linspace(0,y,shape[1],endpoint=False)
-xx,yy = np.meshgrid(lin_x,lin_y)
 
-test = np.random.randint(1,10, size=shape)
+n = 2
+X = np.empty(shape=[0, n])
 
-def LoG(x, y, sigma):
-    temp = (x ** 2 + y ** 2) / (2 * sigma ** 2)
-    return -1 / (np.pi * sigma ** 4) * (1 - temp) * np.exp(-temp)
 
-half_N = x // 2
-zz = LoG(xx - half_N, yy - half_N, sigma=20000) *10e18
+# x, y = 10000, 10000
+# shape = (100,100)
+# lin_x = np.linspace(0,x,shape[0],endpoint=False)
+# lin_y = np.linspace(0,y,shape[1],endpoint=False)
+# xx,yy = np.meshgrid(lin_x,lin_y)
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection="3d")
-ax.plot_surface(xx, yy, -zz, cmap='coolwarm')
+# test = np.random.randint(1,10, size=shape)
+
+# def LoG(x, y, sigma):
+#     temp = (x ** 2 + y ** 2) / (2 * sigma ** 2)
+#     return -1 / (np.pi * sigma ** 4) * (1 - temp) * np.exp(-temp)
+
+# half_N = x // 2
+# zz = LoG(xx - half_N, yy - half_N, sigma=20000) *10e18
+
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection="3d")
+# ax.plot_surface(xx, yy, -zz, cmap='coolwarm')
 # plt.show()
 
 

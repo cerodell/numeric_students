@@ -188,7 +188,7 @@ class Approximator:
     #############################################
     ############# Advection Function ############
     #############################################
-    def advect_fun(self):
+    def advect_fun(self, Yes):
         """
         Fire rate of spread, Rf, parameteriziation defiend by Rothermel (1972)
        
@@ -224,17 +224,19 @@ class Approximator:
         Rf = R0 * (1 + k1 + k2) * np.abs(delta_phi)
         # print(Rf[self.yloc,self.xloc], 'Rf')
         # print(np.max(Rf), 'Rf max')
-        cflx, cfly, cfl = self.cfl(Rf)
-
-        if cflx > 1.74:
-            print(f"CFL of {cflx}")
-            sys.exit("ERROR! CFL condition has been compromised")
-        elif cfly > 1.74:
-            print(f"CFL of {cfly}")
-            sys.exit("ERROR! CFL condition has been compromised")
-        elif cflx < -1e-10:
-            print(f"CFL of {cflx}")
-            sys.exit("ERROR! CFL condition has been compromised")
+        if Yes == "Yes":
+            cflx, cfly, cfl = self.cfl(Rf)
+            if cflx > 1.74:
+                print(f"CFL of {cflx}")
+                sys.exit("ERROR! CFL condition has been compromised")
+            elif cfly > 1.74:
+                print(f"CFL of {cfly}")
+                sys.exit("ERROR! CFL condition has been compromised")
+            elif cflx < -1e-10:
+                print(f"CFL of {cflx}")
+                sys.exit("ERROR! CFL condition has been compromised")
+            else:
+                pass
         else:
             pass
         # print(cflx, "Courant–Friedrichs–Lewy condition")
@@ -306,7 +308,7 @@ class Approximator:
     #############################################
     ######## Time discretization methods ########
     #############################################
-    def rk3(self):
+    def rk3(self, Yes):
         """
         3rd order Runge-Kutta
         
@@ -326,19 +328,19 @@ class Approximator:
             phi_ij = self.phi_ij
             # print(phi_ij[self.yloc,self.xloc], "phi_ij var")
 
-            phi_str = phi_ij - (dt/3) * self.advect_fun()
+            phi_str = phi_ij - (dt/3) * self.advect_fun(Yes)
             # print(phi_str[self.yloc,self.xloc], 'phi_str')
 
             self.phi_ij = phi_str
             # print(self.phi_ij[self.yloc,self.xloc], 'self phi_ij should be phi_str')
 
-            phi_str_str  = phi_ij - (dt/2) * self.advect_fun()
+            phi_str_str  = phi_ij - (dt/2) * self.advect_fun(Yes)
             # print(phi_str_str[self.yloc,self.xloc], 'phi_str_str')
 
             self.phi_ij = phi_str_str
             # print(self.phi_ij[self.yloc,self.xloc], 'self phi_ij should be phi_str_str')
 
-            phi_n  = phi_ij - dt * self.advect_fun()
+            phi_n  = phi_ij - dt * self.advect_fun(Yes)
             phi_n = np.array(phi_n)
             # print(phi_n[self.yloc,self.xloc], "phi_n pre where")
 
@@ -380,13 +382,13 @@ class Approximator:
 
         return
 
-    def plot_Phi3D(self):
+    def plot_Phi3D(self, Yes):
         """
         Phi 3D Plot
         """
         plane = self.phi_ij * 0
         nsteps = self.timevars.nsteps
-        rk3 = self.rk3()
+        rk3 = self.rk3(Yes)
         fig = plt.figure(figsize=(12,6))
         fig.suptitle("Surface Function $\Phi_{i,j}$   Time (Seconds): " + str(self.time), fontsize= 16, fontweight="bold")
         ax = fig.add_subplot(111, projection="3d")
@@ -404,12 +406,12 @@ class Approximator:
         return
 
 
-    def plot_main(self):
+    def plot_main(self, Yes):
         """
         Fire line overlayed on Terrain contourf Plot
         """
         fire_level = 0
-        rk3 = self.rk3()
+        rk3 = self.rk3(Yes)
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
         ax.set_title("Run Time (Seconds):  " + str(self.time) , fontsize= 12)
@@ -435,14 +437,14 @@ class Approximator:
 
         return
 
-    def plot_main_animate(self):
+    def plot_main_animate(self, Yes):
         """
         Fire line overlayed on Terrain contourf Plot
         """
         nsteps = self.timevars.nsteps
         dt = self.timevars.dt
         fire_level = 0
-        rk3 = self.rk3()
+        rk3 = self.rk3(Yes)
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.suptitle("Fire Line Propagation", fontsize= 16, fontweight="bold")
         level = np.arange(np.min(self.world),np.max(self.world),1)

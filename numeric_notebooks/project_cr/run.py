@@ -15,18 +15,20 @@ from approximator import Approximator
 
 coeff = Approximator("namelist.yaml")
 
-
+## Trun the cfl monitor on (Yes) or off (No)
+## if Yes scrit will abort if cfl is compromised
+cfl = "No"
 ########################################################################
 """ #######  Fire line overlayed on Terrain contourf Plot ########## """
 ########################################################################
 
-plot_main = coeff.plot_main()
+plot_main = coeff.plot_main(cfl)
 
 ########################################################################
 """ #### Fire line overlayed on Terrain contourf Plot animated ##### """
 ########################################################################
 
-plot_animation = coeff.plot_main_animate()
+# plot_animation = coeff.plot_main_animate(cfl)
 
 ########################################################################
 """ ##################### Terrain 3D Plot ######################### """
@@ -39,7 +41,7 @@ plot_animation = coeff.plot_main_animate()
 """ ######################## Phi 3D Plot ########################### """
 ########################################################################
 
-# plot_phi_3D = coeff.plot_Phi3D()
+# plot_phi_3D = coeff.plot_Phi3D(cfl)
 
 
 ########################################################################

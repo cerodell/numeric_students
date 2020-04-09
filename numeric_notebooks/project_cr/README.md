@@ -5,14 +5,15 @@ A simple model of wildland propagation using the Level-Set Method.
 
 
 ## How to Run
-1)  Define initial condition and domain set up in the namelist.yaml file
- 
- *Default values are provided*
+1)  Define initial condition and domain set up in the namelist.yaml file *Default values are provided*
  
 2) Open run.py 
 	- choose a plotting option *default is plot_main*
 	- plotting option are defined within run.py
 	- hit run :) 
+
+
+
 
 
 NOTE

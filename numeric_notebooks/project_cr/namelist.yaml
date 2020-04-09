@@ -1,20 +1,20 @@
 timevars:
-  dt: 100
-  nsteps: 4
+  dt: 2
+  nsteps: 1801
 spatialvars:
   x: 10000
   y: 10000
-  dx: 10
-  dy: 10
+  dx: 20
+  dy: 20
 terrain:
   octaves: 6
   persistence: 0.4
   lacunarity: 2.0
 fire:
-  xf_start: 45
-  xf_end: 55
-  yf_start: 50
-  yf_end: 52
+  xf_start: 240
+  xf_end: 260
+  yf_start: 250
+  yf_end: 255
 firecoeff:
   uf: 10.
   R0: 4.2

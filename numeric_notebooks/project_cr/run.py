@@ -17,7 +17,7 @@ coeff = Approximator("namelist.yaml")
 
 ## Trun the cfl monitor on (Yes) or off (No)
 ## if Yes scrit will abort if cfl is compromised
-cfl = "No"
+cfl = "Yes"
 ########################################################################
 """ #######  Fire line overlayed on Terrain contourf Plot ########## """
 ########################################################################

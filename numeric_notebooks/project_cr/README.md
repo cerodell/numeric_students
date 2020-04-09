@@ -9,7 +9,7 @@ A simple model of wildland propagation using the Level-Set Method.
  
 2) Open run.py 
 	- choose a plotting option *default is plot_main*
-	- plotting option are defined within run.py
+	- other plotting option are defined within run.py
 	- hit run :) 
 
 

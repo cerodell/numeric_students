@@ -16,7 +16,7 @@ A simple model of wildland propagation using the Level-Set Method.
 
 
 NOTE
-I have included an abort command to the model when this CFL condition is violated. You can turn this feature on or off by setting cfl = "Yes" or "No"  in run.py
+I have included an abort command to the model when the CFL condition is violated. You can turn this feature on or off by setting cfl = "Yes" or "No"  in run.py
 
 *Default is set to "Yes"*
 

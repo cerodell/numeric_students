@@ -3,6 +3,14 @@
 
 A simple model of wildland propagation using the Level-Set Method.
 
+## Important
+Ensure your working dirctiory has context.py within it.
+
+**Essesntial packadges**
+noise: used to generate terrain
+import noise
+https://anaconda.org/conda-forge/noise
+conda install -c conda-forge noise
 
 ## How to Run
 1)  Define initial condition and domain set up in the namelist.yaml file *Default values are provided*
@@ -16,7 +24,7 @@ A simple model of wildland propagation using the Level-Set Method.
 
 
 
-NOTE
+#### NOTE
 I have included an abort command to the model when the CFL condition is violated. You can turn this feature on or off by setting cfl = "Yes" or "No"  in run.py
 
 *Default is set to "Yes"*

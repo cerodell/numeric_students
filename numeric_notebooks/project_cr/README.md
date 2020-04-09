@@ -7,10 +7,10 @@ A simple model of wildland propagation using the Level-Set Method.
 Ensure your working dirctiory has context.py within it.
 
 **Essesntial packadges**
-noise: used to generate terrain
-import noise
-https://anaconda.org/conda-forge/noise
-conda install -c conda-forge noise
+noise: used to generate terrain <br />
+`import noise` <br />
+https://anaconda.org/conda-forge/noise <br />
+```conda install -c conda-forge noise``` <br />
 
 ## How to Run
 1)  Define initial condition and domain set up in the namelist.yaml file *Default values are provided*
